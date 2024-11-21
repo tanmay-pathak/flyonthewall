@@ -1,101 +1,116 @@
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element */
+"use client";
+
+import { useS3Upload } from "next-s3-upload";
+import { useState } from "react";
+import Dropzone from "react-dropzone";
+import { PhotoIcon } from "@heroicons/react/20/solid";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  interface MenuItem {
+    name: string;
+    price: number;
+    description: string;
+    menuImage: {
+      b64_json: string;
+    };
+  }
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+  const { uploadToS3 } = useS3Upload();
+  const [menuUrl, setMenuUrl] = useState<string | undefined>(undefined);
+  const [status, setStatus] = useState<
+    "initial" | "uploading" | "parsing" | "created"
+  >("initial");
+  const [parsedMenu, setParsedMenu] = useState<MenuItem[]>([]);
+
+  const handleFileChange = async (file: File) => {
+    const objectUrl = URL.createObjectURL(file);
+    setStatus("uploading");
+    setMenuUrl(objectUrl);
+    const { url } = await uploadToS3(file);
+    setMenuUrl(url);
+    setStatus("parsing");
+
+    const res = await fetch("/api/parseMenu", {
+      method: "POST",
+      body: JSON.stringify({
+        menuUrl: url,
+      }),
+    });
+    const json = await res.json();
+
+    console.log({ json });
+
+    setStatus("created");
+    setParsedMenu(json.menu);
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center mt-20 max-w-5xl mx-auto">
+      <h1 className="text-4xl font-bold mb-20">Menu Visualizer</h1>
+
+      <div className="flex flex-col p-8 md:w-1/2">
+        <Dropzone
+          multiple={false}
+          // accept={{ "image/png": [".png", ".jpg", ".jpeg"] }}
+          onDrop={(acceptedFiles) => handleFileChange(acceptedFiles[0])}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          {({ getRootProps, getInputProps, isDragAccept }) => (
+            <div
+              className={`mt-2 flex aspect-video cursor-pointer items-center justify-center rounded-lg border border-dashed ${
+                isDragAccept ? "border-blue-500" : "border-gray-900/25"
+              }`}
+              {...getRootProps()}
+            >
+              <input {...getInputProps()} />
+              <div className="text-center">
+                <PhotoIcon
+                  className="mx-auto h-12 w-12 text-gray-300"
+                  aria-hidden="true"
+                />
+                <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                  <label
+                    htmlFor="file-upload"
+                    className="relative rounded-md bg-white font-semibold text-black focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-gray-700"
+                  >
+                    <p className="text-xl">Upload your menu</p>
+                    <p className="mt-1 font-normal text-gray-600">
+                      or drag and drop
+                    </p>
+                  </label>
+                </div>
+              </div>
+            </div>
+          )}
+        </Dropzone>
+
+        {menuUrl && (
+          <div className="my-10">
+            <h2 className="text-2xl font-bold mb-5">Uploaded menu</h2>
+            <img src={menuUrl} alt="Menu" />
+          </div>
+        )}
+
+        {parsedMenu.length > 0 && (
+          <div className="mt-10">
+            <h2 className="text-2xl font-bold">
+              Menu – {parsedMenu.length} dishes detected
+            </h2>
+            {parsedMenu.map((item) => (
+              <div key={item.name}>
+                <h3 className="text-xl font-bold">
+                  {item.name} – {item.price}
+                </h3>
+                <p className="text-sm text-gray-500">{item.description}</p>
+                <img
+                  src={`data:image/png;base64,${item.menuImage.b64_json}`}
+                  alt={item.name}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
