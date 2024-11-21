@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Together } from "together-ai";
 import { z } from "zod";
 import zodToJsonSchema from "zod-to-json-schema";
@@ -45,7 +46,11 @@ export async function POST(request: Request) {
     z.object({
       name: z.string().describe("The name of the menu item"),
       price: z.string().describe("The price of the menu item"),
-      description: z.string().describe("The description of the menu item"),
+      description: z
+        .string()
+        .describe(
+          "The description of the menu item. If this doesn't exist, please write a short one sentence description of the food name."
+        ),
     })
   );
   const jsonSchema = zodToJsonSchema(menuSchema, "menuSchema");
@@ -73,19 +78,24 @@ export async function POST(request: Request) {
     console.log({ menuItemsJSON });
   }
 
-  for (const item of menuItemsJSON) {
-    console.log("processed one image...");
+  // Create an array of promises for parallel image generation
+  const imagePromises = menuItemsJSON.map(async (item: any) => {
+    console.log("processing image for:", item.name);
     const response = await together.images.create({
-      prompt: `${item.name} ${item.description}`,
+      prompt: `A picture of food for a menu, hyper realistic, highly detailed, ${item.name} ${item.description}`,
       model: "black-forest-labs/FLUX.1-schnell",
       width: 1024,
       height: 768,
-      steps: 3,
+      steps: 5,
       // @ts-expect-error - this is not typed in the API
       response_format: "base64",
     });
     item.menuImage = response.data[0];
-  }
+    return item;
+  });
+
+  // Wait for all images to be generated
+  await Promise.all(imagePromises);
 
   return Response.json({ menu: menuItemsJSON });
 }
