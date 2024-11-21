@@ -115,6 +115,29 @@ export default function Home() {
             />
           </div>
         )}
+
+        {status === "parsing" && (
+          <div className="mt-10 flex flex-col items-center">
+            <div className="flex items-center space-x-4 mb-6">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500" />
+              <p className="text-lg text-gray-600">
+                Creating your visual menu...
+              </p>
+            </div>
+            <div className="w-full max-w-2xl space-y-4">
+              <div className="h-8 bg-gray-200 rounded-lg animate-pulse" />
+              <div className="grid grid-cols-3 gap-4">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="space-y-2">
+                    <div className="h-32 bg-gray-200 rounded-lg animate-pulse" />
+                    <div className="h-4 bg-gray-200 rounded animate-pulse" />
+                    <div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       {parsedMenu.length > 0 && (
         <div className="mt-10">
