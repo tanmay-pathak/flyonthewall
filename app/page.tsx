@@ -56,14 +56,16 @@ export default function Home() {
     <div className="container text-center px-4 py-8 bg-white max-w-5xl mx-auto">
       <div className="max-w-2xl text-center mx-auto mt-20">
         <p className="mx-auto mb-5 w-fit rounded-2xl border px-4 py-1 text-sm text-slate-500">
-          <b>100+</b> menus uploaded so far
+          100% <b>free</b> and <b>open source</b>!
         </p>
         <h1 className="mb-6 text-balance text-6xl font-bold text-zinc-800">
           Visualize your menu with AI
         </h1>
-        <p className="mb-8 text-lg text-gray-500">
-          Take a picture of your menu and get nice pictures of each dish so you
-          can better decide what to order.
+      </div>
+      <div className="max-w-3xl text-center mx-auto">
+        <p className="mb-8 text-lg text-gray-500 text-balance ">
+          Take a picture of your menu and get pictures of each dish so you can
+          better decide what to order.
         </p>
       </div>
 
@@ -105,7 +107,6 @@ export default function Home() {
 
         {menuUrl && (
           <div className="my-10 mx-auto flex  flex-col items-center">
-            <h2 className="text-2xl font-bold mb-5">Uploaded menu</h2>
             <Image
               width={1024}
               height={768}
