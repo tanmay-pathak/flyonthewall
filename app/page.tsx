@@ -7,7 +7,7 @@ import { PhotoIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { Input } from "@/components/ui/input";
 import { MenuGrid } from "@/components/menu-grid";
 import Image from "next/image";
-import { sampleMenuUrl, sampleParsedMenu } from "@/lib/constants";
+import { italianMenuUrl, italianParsedMenu } from "@/lib/constants";
 
 export interface MenuItem {
   name: string;
@@ -51,11 +51,11 @@ export default function Home() {
 
   const handleSampleImage = async () => {
     setStatus("parsing");
-    setMenuUrl(sampleMenuUrl);
+    setMenuUrl(italianMenuUrl);
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     setStatus("created");
-    setParsedMenu(sampleParsedMenu);
+    setParsedMenu(italianParsedMenu);
   };
 
   const filteredMenu = parsedMenu.filter((item) =>

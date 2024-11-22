@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 
   const systemPrompt = `You are given an image of a menu. Your job is to take each item in the menu and convert it into the following JSON format:
 
-[{"name": "name of menu item", "price": "price in $", "description": "description of menu item"}, ...]
+[{"name": "name of menu item", "price": "price of the menu item", "description": "description of menu item"}, ...]
 
   Please make sure to include all items in the menu and include a price (if it exists) & a description (if it exists). ALSO PLEASE ONLY RETURN JSON. IT'S VERY IMPORTANT FOR MY JOB THAT YOU ONLY RETURN JSON.
   `;
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
       description: z
         .string()
         .describe(
-          "The description of the menu item. If this doesn't exist, please write a short one sentence description of the food name."
+          "The description of the menu item. If this doesn't exist, please write a short one sentence description."
         ),
     })
   );
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
   const imagePromises = menuItemsJSON.map(async (item: any) => {
     console.log("processing image for:", item.name);
     const response = await together.images.create({
-      prompt: `A picture of food for a menu, hyper realistic, highly detailed, ${item.name} ${item.description}`,
+      prompt: `A picture a delicious ${item.name} ${item.description}. hyper-realistic style captures every texture and detail`,
       model: "black-forest-labs/FLUX.1-schnell",
       width: 1024,
       height: 768,
@@ -110,4 +110,4 @@ export async function POST(request: Request) {
   return Response.json({ menu: menuItemsJSON });
 }
 
-export const maxDuration = 45;
+export const maxDuration = 60;
