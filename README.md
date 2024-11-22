@@ -2,12 +2,10 @@
 
 ## TODOs
 
-- [ ] Make sure it’s responsive
 - [ ] Add some two good examples (one simple menu, one more complex)
 - [ ] Make the README look good
-- [ ] Use Helicone in the calls
 - [ ] OG image and SEO
-- [ ] Analytics
+- [ ] Scroll to loading state when it's loading
 
 ## Future TODOs
 

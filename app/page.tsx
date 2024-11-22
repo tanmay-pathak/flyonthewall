@@ -54,7 +54,7 @@ export default function Home() {
 
   return (
     <div className="container text-center px-4 py-8 bg-white max-w-5xl mx-auto">
-      <div className="max-w-2xl text-center mx-auto mt-20">
+      <div className="max-w-2xl text-center mx-auto sm:mt-20 mt-2">
         <p className="mx-auto mb-5 w-fit rounded-2xl border px-4 py-1 text-sm text-slate-500">
           100% <b>free</b> and <b>open source</b>!
         </p>
