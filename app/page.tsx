@@ -66,7 +66,16 @@ export default function Home() {
     <div className="container text-center px-4 py-8 bg-white max-w-5xl mx-auto">
       <div className="max-w-2xl text-center mx-auto sm:mt-20 mt-2">
         <p className="mx-auto mb-5 w-fit rounded-2xl border px-4 py-1 text-sm text-slate-500">
-          100% <b>free</b> and <b>open source</b>!
+          100% free and powered by{" "}
+          <a
+            href="https://dub.sh/together-ai"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-blue-500 transition font-bold"
+          >
+            Together AI
+          </a>
+          !
         </p>
         <h1 className="mb-6 text-balance text-6xl font-bold text-zinc-800">
           Visualize your menu with AI
