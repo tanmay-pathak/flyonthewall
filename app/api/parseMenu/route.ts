@@ -93,7 +93,7 @@ export async function POST(request: Request) {
   const imagePromises = menuItemsJSON.map(async (item: any) => {
     console.log("processing image for:", item.name);
     const response = await together.images.create({
-      prompt: `A picture a delicious ${item.name} ${item.description}. hyper-realistic style captures every texture and detail`,
+      prompt: `A picture of food for a menu, hyper realistic, highly detailed, ${item.name}, ${item.description}.`,
       model: "black-forest-labs/FLUX.1-schnell",
       width: 1024,
       height: 768,
