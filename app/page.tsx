@@ -83,6 +83,9 @@ export default function Home() {
         {status === "initial" && (
           <>
             <Dropzone
+              accept={{
+                "image/*": [".jpg", ".jpeg", ".png"],
+              }}
               multiple={false}
               onDrop={(acceptedFiles) => handleFileChange(acceptedFiles[0])}
             >
