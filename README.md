@@ -4,7 +4,7 @@
 
 - [ ] Add some two good examples (one simple menu, one more complex)
 - [ ] Make the README look good
-- [ ] OG image and SEO
+- [ ] Add OG image
 - [ ] Scroll to loading state when it's loading
 
 ## Future TODOs

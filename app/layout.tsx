@@ -7,9 +7,34 @@ import PlausibleProvider from "next-plausible";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const title = "PicMenu – Visualize your menu items with nice images";
+const description = "Visualize your menu items with nice images";
+const url = "https://www.picmenu.co/";
+const ogimage = "https://www.picmenu.co/og-image.png";
+const sitename = "picmenu.co";
+
 export const metadata: Metadata = {
-  title: "Menu Visualizer",
-  description: "Upload and visualize your menu items",
+  metadataBase: new URL(url),
+  title,
+  description,
+  icons: {
+    icon: "/favicon.ico",
+  },
+  openGraph: {
+    images: [ogimage],
+    title,
+    description,
+    url: url,
+    siteName: sitename,
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [ogimage],
+    title,
+    description,
+  },
 };
 
 export default function RootLayout({
