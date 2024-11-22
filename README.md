@@ -30,6 +30,7 @@
 
 ## Future Tasks
 
+- [ ] Add a more complex example menu
 - [ ] Generate additional details (ingredients, origin, calories, taste) then display them in a modal when a user clicks a menu item
 - [ ] After upload, do a nice scroll to the loading state when it's loading
 - [ ] Add some tags as well (like spicy, vegetarian, vegan, etc.) to make the UI better

@@ -1,13 +1,5 @@
+import { MenuItem } from "@/app/page";
 import Image from "next/image";
-
-interface MenuItem {
-  name: string;
-  price: number;
-  description: string;
-  menuImage: {
-    b64_json: string;
-  };
-}
 
 interface MenuGridProps {
   items: MenuItem[];

@@ -7,10 +7,11 @@ import { PhotoIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { Input } from "@/components/ui/input";
 import { MenuGrid } from "@/components/menu-grid";
 import Image from "next/image";
+import { sampleMenuUrl, sampleParsedMenu } from "@/lib/constants";
 
-interface MenuItem {
+export interface MenuItem {
   name: string;
-  price: number;
+  price: string;
   description: string;
   menuImage: {
     b64_json: string;
@@ -48,6 +49,15 @@ export default function Home() {
     setParsedMenu(json.menu);
   };
 
+  const handleSampleImage = async () => {
+    setStatus("parsing");
+    setMenuUrl(sampleMenuUrl);
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    setStatus("created");
+    setParsedMenu(sampleParsedMenu);
+  };
+
   const filteredMenu = parsedMenu.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -71,38 +81,46 @@ export default function Home() {
 
       <div className="max-w-2xl mx-auto">
         {status === "initial" && (
-          <Dropzone
-            multiple={false}
-            onDrop={(acceptedFiles) => handleFileChange(acceptedFiles[0])}
-          >
-            {({ getRootProps, getInputProps, isDragAccept }) => (
-              <div
-                className={`mt-2 flex aspect-video cursor-pointer items-center justify-center rounded-lg border-2 border-dashed ${
-                  isDragAccept ? "border-blue-500" : "border-gray-300"
-                }`}
-                {...getRootProps()}
-              >
-                <input {...getInputProps()} />
-                <div className="text-center">
-                  <PhotoIcon
-                    className="mx-auto h-12 w-12 text-gray-300"
-                    aria-hidden="true"
-                  />
-                  <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                    <label
-                      htmlFor="file-upload"
-                      className="relative rounded-md bg-white font-semibold text-gray-800 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-gray-600"
-                    >
-                      <p className="text-xl">Upload your menu</p>
-                      <p className="mt-1 font-normal text-gray-600">
-                        or take a picture
-                      </p>
-                    </label>
+          <>
+            <Dropzone
+              multiple={false}
+              onDrop={(acceptedFiles) => handleFileChange(acceptedFiles[0])}
+            >
+              {({ getRootProps, getInputProps, isDragAccept }) => (
+                <div
+                  className={`mt-2 flex aspect-video cursor-pointer items-center justify-center rounded-lg border-2 border-dashed ${
+                    isDragAccept ? "border-blue-500" : "border-gray-300"
+                  }`}
+                  {...getRootProps()}
+                >
+                  <input {...getInputProps()} />
+                  <div className="text-center">
+                    <PhotoIcon
+                      className="mx-auto h-12 w-12 text-gray-300"
+                      aria-hidden="true"
+                    />
+                    <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                      <label
+                        htmlFor="file-upload"
+                        className="relative rounded-md bg-white font-semibold text-gray-800 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-gray-600"
+                      >
+                        <p className="text-xl">Upload your menu</p>
+                        <p className="mt-1 font-normal text-gray-600">
+                          or take a picture
+                        </p>
+                      </label>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </Dropzone>
+              )}
+            </Dropzone>
+            <button
+              className="mt-5 font-medium text-blue-400 text-md underline decoration-transparent hover:decoration-blue-200 decoration-2 underline-offset-4 transition hover:text-blue-500"
+              onClick={handleSampleImage}
+            >
+              Need an example image? Try ours.
+            </button>
+          </>
         )}
 
         {menuUrl && (
