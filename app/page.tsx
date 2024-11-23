@@ -37,15 +37,20 @@ export default function Home() {
     <div className="container px-4 py-8 bg-white max-w-screen-lg mx-auto">
       {status === "initial" && (
         <>
-          <div className="text-center mx-auto mt-2">
-            <h1 className="mb-6 text-balance text-6xl font-bold text-zinc-800">
+          <div className="text-center mt-2">
+            <h1 className="mb-8 text-balance text-6xl font-bold text-zinc-800">
               Meeting Notes Assistant
             </h1>
           </div>
           <div className="max-w-3xl text-center mx-auto">
-            <p className="mb-8 text-lg text-gray-500 text-balance">
+            <p className="mb-12 text-lg text-gray-600 text-balance leading-relaxed">
               Upload your meeting transcript and get an AI-powered summary with
-              action items, key points, and attendees
+              action items, key points, and attendees.
+              <br />
+              <span className="mt-4 block text-sm text-gray-500 italic">
+                To export your transcript as a .txt file, go to File → Download
+                → Plain text.
+              </span>
             </p>
           </div>
         </>
