@@ -213,7 +213,7 @@ export default function Home() {
             >
               {({ getRootProps, getInputProps, isDragAccept }) => (
                 <div
-                  className={`mt-2 flex aspect-video cursor-pointer items-center justify-center rounded-lg border-2 border-dashed ${
+                  className={`flex aspect-video cursor-pointer items-center justify-center rounded-lg border-2 border-dashed ${
                     isDragAccept ? "border-blue-500" : "border-gray-300"
                   }`}
                   {...getRootProps()}
