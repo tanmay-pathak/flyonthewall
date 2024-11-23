@@ -7,6 +7,8 @@ export const menuSchema = z.object({
   summary: z.string().describe("A brief overview of the entire meeting"),
   title: z.string().describe("A brief title for the meeting"),
   attendees: z.array(z.string()).describe("A list of attendees"),
+  date: z.string().describe('Date this meeting took place'),
+  length: z.string().describe('Length of the meeting'),
   actionItems: z
     .array(
       z.object({
@@ -76,6 +78,8 @@ export const sampleOutput = {
     "Lisa Chen",
     "Mark Thompson",
   ],
+  date: 'Nov 23 2024',
+  length: '1 hour',
   actionItems: [
     {
       assignee: "John Smith",
