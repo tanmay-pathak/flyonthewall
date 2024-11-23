@@ -39,17 +39,14 @@ export default function Home() {
   const [parsedResult, setParsedResult] = useState<z.infer<typeof menuSchema>>();
 
   const handleFileChange = async (file: File) => {
-    const objectUrl = URL.createObjectURL(file);
     setStatus("uploading");
-    setMenuUrl(objectUrl);
-    const { url } = await uploadToS3(file);
-    setMenuUrl(url);
+    const text = await file.text();
     setStatus("parsing");
 
     const res = await fetch("/api/parseMenu", {
       method: "POST",
       body: JSON.stringify({
-        menuUrl: url,
+        text: text,
       }),
     });
     const json = await res.json();
