@@ -21,7 +21,7 @@ export const MeetingDetails = ({
   data: z.infer<typeof menuSchema>;
 }) => {
   return (
-    <Accordion type={"multiple"} className="w-full flex flex-col gap-4">
+    <Accordion type={"multiple"} defaultValue={["summary"]} className="w-full flex flex-col gap-4">
       <AccordionItem value="summary">
         <Card>
           <CardHeader>

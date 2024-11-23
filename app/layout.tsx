@@ -1,16 +1,16 @@
-import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import "./globals.css";
+import { Header } from "@/components/header";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import PlausibleProvider from "next-plausible";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
-const title = "PicMenu – Visualize your menu items with nice images";
-const description = "Visualize your menu items with nice images";
-const url = "https://www.picmenu.co/";
-const ogimage = "https://www.picmenu.co/og-image.png";
-const sitename = "picmenu.co";
+const title = "Meeting Notes Assistant";
+const description =
+  "Upload your meeting transcript and get an AI-powered summary with action items, key points, and attendees";
+const url = "https://flyonthewall.vercel.app/";
+const ogimage = "https://flyonthewall.vercel.app/og-image.png";
+const sitename = "Fly on the Wall";
 
 export const metadata: Metadata = {
   metadataBase: new URL(url),
@@ -43,9 +43,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <PlausibleProvider domain="picmenu.co" />
-      </head>
       <body
         className={`${inter.className} flex flex-col min-h-screen bg-white text-gray-800`}
       >
