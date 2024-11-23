@@ -27,8 +27,6 @@ export default function Home() {
     });
     const json = await res.json();
 
-    console.log({ json });
-
     setStatus("created");
     const validatedOutput = menuSchema.parse(json);
     setParsedResult(validatedOutput);
@@ -38,14 +36,15 @@ export default function Home() {
     <div className="container px-4 py-8 bg-white max-w-screen-lg mx-auto">
       {status === "initial" && (
         <>
-          <div className="max-w-2xl text-center mx-auto mt-2">
+          <div className="text-center mx-auto mt-2">
             <h1 className="mb-6 text-balance text-6xl font-bold text-zinc-800">
-              Meeting Summarizer
+              Meeting Notes Assistant
             </h1>
           </div>
           <div className="max-w-3xl text-center mx-auto">
-            <p className="mb-8 text-lg text-gray-500 text-balance ">
-              Copy and paste your meeting notes below to get a summary of the key
+            <p className="mb-8 text-lg text-gray-500 text-balance">
+              Upload your meeting transcript and get an AI-powered summary with
+              action items, key points, and attendees
             </p>
           </div>
         </>
@@ -67,7 +66,7 @@ export default function Home() {
         {parsedResult && (
           <div className="flex-1">
             <ScrollArea className="h-full w-full rounded-md p-4 gap-2">
-                <MeetingDetails data={parsedResult} />
+              <MeetingDetails data={parsedResult} />
             </ScrollArea>
           </div>
         )}
