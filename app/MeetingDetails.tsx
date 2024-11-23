@@ -21,7 +21,11 @@ export const MeetingDetails = ({
   data: z.infer<typeof menuSchema>;
 }) => {
   return (
-    <Accordion type={"multiple"} defaultValue={["summary"]} className="w-full flex flex-col gap-4">
+    <Accordion
+      type={"multiple"}
+      defaultValue={["summary"]}
+      className="w-full flex flex-col gap-4"
+    >
       <AccordionItem value="summary">
         <Card>
           <CardHeader>
@@ -168,6 +172,67 @@ export const MeetingDetails = ({
           </AccordionContent>
         </Card>
       </AccordionItem>
+      {data.retro && (
+        <AccordionItem value="retro-section">
+          <Card>
+            <CardHeader>
+              <AccordionTrigger>
+                <CardTitle>Team Retrospective</CardTitle>
+              </AccordionTrigger>
+            </CardHeader>
+
+            <AccordionContent>
+              <CardContent>
+                <table className="w-full table-auto border-collapse border border-gray-200">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="border border-gray-300 px-4 py-2">
+                        Participant
+                      </th>
+                      <th className="border border-gray-300 px-4 py-2">
+                        Category
+                      </th>
+                      <th className="border border-gray-300 px-4 py-2">
+                        Description
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.retro?.participants.map(
+                      (participant, participantIndex) => (
+                        <>
+                          {participant.items.map((item, itemIndex) => (
+                            <tr key={itemIndex}>
+                              <td
+                                className={`border border-gray-300 px-4 py-2 ${
+                                  itemIndex === 0 ? "font-semibold" : ""
+                                }`}
+                              >
+                                {itemIndex === 0 ? participant.name : ""}
+                              </td>
+                              <td className="border border-gray-300 px-4 py-2 capitalize">
+                                {item.category}
+                              </td>
+                              <td className="border border-gray-300 px-4 py-2">
+                                {item.description}
+                              </td>
+                            </tr>
+                          ))}
+                        </>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </CardContent>
+              <CardFooter>
+                <p className="text-sm text-gray-500">
+                  Total Participants: {data.retro?.participants.length}
+                </p>
+              </CardFooter>
+            </AccordionContent>
+          </Card>
+        </AccordionItem>
+      )}
     </Accordion>
   );
 };

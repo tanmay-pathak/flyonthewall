@@ -6,9 +6,7 @@ export const menuSchema = z.object({
     .describe("Key points and highlights from the meeting discussion"),
   summary: z.string().describe("A brief overview of the entire meeting"),
   title: z.string().describe("A brief title for the meeting"),
-  attendees: z
-  .array(z.string())
-  .describe("A list of attendees"),
+  attendees: z.array(z.string()).describe("A list of attendees"),
   actionItems: z
     .array(
       z.object({
@@ -31,6 +29,33 @@ export const menuSchema = z.object({
     .describe(
       "Possible future tasks that were discussed but not yet confirmed"
     ),
+  retro: z
+    .object({
+      participants: z
+        .array(
+          z.object({
+            name: z.string().min(1).describe("Name of the participant"),
+            items: z
+              .array(
+                z.object({
+                  category: z
+                    .enum(["loves", "longedFor", "loathed", "learned"])
+                    .describe("The retro category of the item"),
+                  description: z
+                    .string()
+                    .min(1, "Description cannot be empty")
+                    .describe("Description of the retro item"),
+                })
+              )
+              .describe("A list of retro items for this participant"),
+          })
+        )
+        .describe("List of participants and their contributions to the retro"),
+    })
+    .optional()
+    .describe(
+      "This block is for retro notes. Only populate this portion if the meeting is about a retro"
+    ),
 });
 
 export const sampleOutput = {
@@ -43,7 +68,14 @@ export const sampleOutput = {
   ],
   summary: "Comprehensive Q4 Planning and Strategy Session",
   title: "Q4 Strategic Planning & Team Alignment Meeting",
-  attendees: ["John Smith", "Sarah Jones", "Emily Davis", "Mike Johnson", "Lisa Chen", "Mark Thompson"],
+  attendees: [
+    "John Smith",
+    "Sarah Jones",
+    "Emily Davis",
+    "Mike Johnson",
+    "Lisa Chen",
+    "Mark Thompson",
+  ],
   actionItems: [
     {
       assignee: "John Smith",
@@ -84,4 +116,47 @@ export const sampleOutput = {
         "Develop a framework for improving cross-team collaboration during Q4, outlining specific tools, workflows, and communication strategies that can help reduce inefficiencies and improve project alignment.",
     },
   ],
+  retro: {
+    participants: [
+      {
+        name: "Alice Brown",
+        items: [
+          {
+            category: "loves",
+            description: "Great collaboration during sprints.",
+          },
+          {
+            category: "learned",
+            description: "Better understanding of REST APIs.",
+          },
+        ],
+      },
+      {
+        name: "Bob Wilson",
+        items: [
+          {
+            category: "longedFor",
+            description: "More structured code reviews.",
+          },
+          {
+            category: "loathed",
+            description: "Too many interruptions during focus time.",
+          },
+        ],
+      },
+      {
+        name: "Catherine Young",
+        items: [
+          {
+            category: "learned",
+            description: "New techniques for improving CI/CD pipelines.",
+          },
+          {
+            category: "loves",
+            description: "Clearer communication in team meetings.",
+          },
+        ],
+      },
+    ],
+  },
 };
