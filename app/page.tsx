@@ -1,12 +1,11 @@
 "use client";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { DocumentTextIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
-import Dropzone from "react-dropzone";
 import { z } from "zod";
 import { menuSchema } from "./api/parseMenu/schema";
 import { MeetingDetails } from "./MeetingDetails";
+import Upload from "./Upload";
 
 export default function Home() {
   const [status, setStatus] = useState<
@@ -49,41 +48,7 @@ export default function Home() {
       </div>
       <div className="flex h-96">
         <div className="flex-1 p-4">
-          <Dropzone
-            accept={{
-              "text/plain": [".txt"],
-            }}
-            multiple={false}
-            onDrop={(acceptedFiles) => handleFileChange(acceptedFiles[0])}
-          >
-            {({ getRootProps, getInputProps, isDragAccept }) => (
-              <div
-                className={`flex aspect-video cursor-pointer items-center justify-center rounded-lg border-2 border-dashed ${
-                  isDragAccept ? "border-blue-500" : "border-gray-300"
-                }`}
-                {...getRootProps()}
-              >
-                <input {...getInputProps()} />
-                <div className="text-center">
-                  <DocumentTextIcon
-                    className="mx-auto h-12 w-12 text-gray-300"
-                    aria-hidden="true"
-                  />
-                  <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                    <label
-                      htmlFor="file-upload"
-                      className="relative rounded-md bg-white font-semibold text-gray-800 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-gray-600"
-                    >
-                      <p className="text-xl">Upload your meeting transcript</p>
-                      <p className="mt-1 font-normal text-gray-600">
-                        Supports txt file
-                      </p>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            )}
-          </Dropzone>
+          <Upload handleFileChange={handleFileChange} />
         </div>
         {parsedResult && (
           <>
