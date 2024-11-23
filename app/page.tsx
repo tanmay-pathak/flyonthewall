@@ -35,7 +35,7 @@ export default function Home() {
   };
 
   return (
-    <div className="container text-center px-4 py-8 bg-white max-w-screen-xl mx-auto">
+    <div className="container text-center px-4 py-8 bg-white max-w-screen-lg mx-auto">
       <div className="max-w-2xl text-center mx-auto mt-2">
         <h1 className="mb-6 text-balance text-6xl font-bold text-zinc-800">
           Meeting Summarizer
@@ -63,9 +63,7 @@ export default function Home() {
         {parsedResult && (
           <div className="flex-1">
             <ScrollArea className="h-full w-full rounded-md p-4 gap-2">
-              <div className="flex flex-col gap-4">
                 <MeetingDetails data={parsedResult} />
-              </div>
             </ScrollArea>
           </div>
         )}
