@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,9 +13,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Copy } from "lucide-react";
 import { z } from "zod";
 import { menuSchema } from "./api/parseMenu/schema";
-import {Button} from "@/components/ui/button";
 
 export const MeetingDetails = ({
   data,
@@ -39,24 +40,30 @@ export const MeetingDetails = ({
       formattedString += `  - ${note}\n`;
     });
     return formattedString;
-  }
+  };
   const copySummary = () => {
     const humanReadableData = formatSummaryData(data);
-    navigator.clipboard.writeText(humanReadableData).then(() => {
-      alert("Summary copied to clipboard");
-    }).catch(err => {
-      console.error("Failed to copy to clipboard", err);
-    });
-  }
+    navigator.clipboard
+      .writeText(humanReadableData)
+      .then(() => {
+        alert("Summary copied to clipboard");
+      })
+      .catch((err) => {
+        console.error("Failed to copy to clipboard", err);
+      });
+  };
 
   const copyKeyHighlights = () => {
     const humanReadableData = formatKeyHighlightsData(data);
-    navigator.clipboard.writeText(humanReadableData).then(() => {
-      alert("Key Highlights copied to clipboard");
-    }).catch(err => {
-      console.error("Failed to copy to clipboard", err);
-    });
-  }
+    navigator.clipboard
+      .writeText(humanReadableData)
+      .then(() => {
+        alert("Key Highlights copied to clipboard");
+      })
+      .catch((err) => {
+        console.error("Failed to copy to clipboard", err);
+      });
+  };
 
   return (
     <Accordion
@@ -66,38 +73,61 @@ export const MeetingDetails = ({
     >
       <AccordionItem value="summary">
         <Card>
-          <CardHeader className="flex flex-row items-start">
+          <CardHeader>
             <AccordionTrigger>
-              <CardTitle className="flex text-xl font-normal">/ Summary</CardTitle>
+              <CardTitle className="flex text-xl font-normal">
+                / Summary
+              </CardTitle>
             </AccordionTrigger>
-            <Button variant="ghost" onClick={copySummary}><img alt="" src="/copy.png"/></Button>
           </CardHeader>
           <AccordionContent>
             <CardContent>
-              <CardDescription className="mb-4"><span className="font-bold text-black">Title: </span>{data.title}</CardDescription>
-              <CardDescription className="mb-4"><span className="font-bold text-black">Date: </span>{data.date}</CardDescription>
-              <CardDescription className="mb-4"><span className="font-bold text-black">Length: </span>{data.length}</CardDescription>
-              <CardDescription className="mb-4"><span className="font-bold text-black">Attendees: </span></CardDescription>
+              <CardDescription className="mb-4">
+                <span className="font-bold text-black">Title: </span>
+                {data.title}
+              </CardDescription>
+              <CardDescription className="mb-4">
+                <span className="font-bold text-black">Date: </span>
+                {data.date}
+              </CardDescription>
+              <CardDescription className="mb-4">
+                <span className="font-bold text-black">Length: </span>
+                {data.length}
+              </CardDescription>
+              <CardDescription className="mb-4">
+                <span className="font-bold text-black">Attendees: </span>
+              </CardDescription>
               <ul className="list-slash pl-4 mt-2 mb-4">
-              {data.attendees.map((attendee, index) => (
-                <li key={index}>{attendee}</li>
-              ))}
+                {data.attendees.map((attendee, index) => (
+                  <li key={index}>{attendee}</li>
+                ))}
               </ul>
 
-              <CardDescription className="mb-2"><span className="font-bold text-black">TL;DR: </span></CardDescription>
+              <CardDescription className="mb-2">
+                <span className="font-bold text-black">TL;DR: </span>
+              </CardDescription>
               <p className="mt-2 mb-4">{data.summary}</p>
             </CardContent>
+            <CardFooter className="flex justify-between">
+              <p className="text-sm text-gray-500">Summary Details</p>
+              <div className="flex gap-2">
+                <Button variant="ghost" onClick={copySummary}>
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardFooter>
           </AccordionContent>
         </Card>
       </AccordionItem>
 
       <AccordionItem value="meeting-notes">
         <Card>
-          <CardHeader className="flex-row items-start">
+          <CardHeader>
             <AccordionTrigger>
-              <CardTitle className="flex text-xl font-normal">/ Key Highlights</CardTitle>
+              <CardTitle className="flex text-xl font-normal">
+                / Key Highlights
+              </CardTitle>
             </AccordionTrigger>
-            <Button variant="ghost" onClick={copyKeyHighlights}><img alt="" src="/copy.png"/></Button>
           </CardHeader>
           <AccordionContent>
             <CardContent>
@@ -109,10 +139,13 @@ export const MeetingDetails = ({
                 ))}
               </ul>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex justify-between">
               <p className="text-sm text-gray-500">
                 Total Points: {data.meetingNotes.length}
               </p>
+              <Button variant="ghost" onClick={copyKeyHighlights}>
+                <Copy className="h-4 w-4" />
+              </Button>
             </CardFooter>
           </AccordionContent>
         </Card>
@@ -122,7 +155,9 @@ export const MeetingDetails = ({
         <Card>
           <CardHeader>
             <AccordionTrigger>
-              <CardTitle className="flex text-xl font-normal">/ Action Items</CardTitle>
+              <CardTitle className="flex text-xl font-normal">
+                / Action Items
+              </CardTitle>
             </AccordionTrigger>
           </CardHeader>
           <AccordionContent>
@@ -160,10 +195,20 @@ export const MeetingDetails = ({
                 </tbody>
               </table>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex justify-between">
               <p className="text-sm text-gray-500">
                 Total Confirmed Tasks: {data.actionItems.length}
               </p>
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  navigator.clipboard.writeText(
+                    JSON.stringify(data.actionItems, null, 2)
+                  )
+                }
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
             </CardFooter>
           </AccordionContent>
         </Card>
@@ -173,7 +218,9 @@ export const MeetingDetails = ({
         <Card>
           <CardHeader>
             <AccordionTrigger>
-              <CardTitle className="flex text-xl font-normal">/ Potential Action Items</CardTitle>
+              <CardTitle className="flex text-xl font-normal">
+                / Potential Action Items
+              </CardTitle>
             </AccordionTrigger>
           </CardHeader>
           <AccordionContent>
@@ -211,10 +258,20 @@ export const MeetingDetails = ({
                 </tbody>
               </table>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex justify-between">
               <p className="text-sm text-gray-500">
                 Total Proposed Tasks: {data.potentialActionItems.length}
               </p>
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  navigator.clipboard.writeText(
+                    JSON.stringify(data.potentialActionItems, null, 2)
+                  )
+                }
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
             </CardFooter>
           </AccordionContent>
         </Card>
@@ -224,7 +281,9 @@ export const MeetingDetails = ({
           <Card>
             <CardHeader>
               <AccordionTrigger>
-                <CardTitle className="flex text-xl font-normal">/ Team Retrospective</CardTitle>
+                <CardTitle className="flex text-xl font-normal">
+                  / Team Retrospective
+                </CardTitle>
               </AccordionTrigger>
             </CardHeader>
 
@@ -271,10 +330,20 @@ export const MeetingDetails = ({
                   </tbody>
                 </table>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="flex justify-between">
                 <p className="text-sm text-gray-500">
                   Total Participants: {data.retro?.participants.length}
                 </p>
+                <Button
+                  variant="ghost"
+                  onClick={() =>
+                    navigator.clipboard.writeText(
+                      JSON.stringify(data.retro, null, 2)
+                    )
+                  }
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
               </CardFooter>
             </AccordionContent>
           </Card>
