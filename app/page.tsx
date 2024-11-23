@@ -48,8 +48,8 @@ export default function Home() {
               action items, key points, and attendees.
               <br />
               <span className="mt-4 block text-sm text-gray-500 italic">
-                To export your transcript as a .txt file, go to File → Download
-                → Plain text.
+                To export your transcript from Google Docs as a .txt file, go to
+                File → Download → Plain text.
               </span>
             </p>
           </div>
