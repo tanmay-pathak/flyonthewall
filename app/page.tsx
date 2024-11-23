@@ -50,11 +50,11 @@ export default function Home() {
       }),
     });
     const json = await res.json();
-
+  
     console.log({ json });
 
     setStatus("created");
-    const validatedOutput = menuSchema.parse(json.menu);
+    const validatedOutput = menuSchema.parse(json);
     setParsedResult(validatedOutput)
   };
 
