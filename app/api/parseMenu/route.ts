@@ -15,6 +15,25 @@ if (process.env.HELICONE_API_KEY) {
 
 const together = new Together(options);
 
+export const menuSchema = z.object({
+  meetingNotes: z.array(z.string()),
+  summary: z.string(),
+  actionItems: z.array(
+      z.object({
+          assignee: z.string(),
+          dueDate: z.date(),
+          actionItem: z.string(),
+      })
+  ),
+  potentialActionItems: z.array(
+      z.object({
+          assignee: z.string(),
+          dueDate: z.date(),
+          actionItem: z.string(),
+      })
+  ),
+});
+
 export async function POST(request: Request) {
     const {menuUrl} = await request.json();
 
@@ -52,25 +71,7 @@ I will tip you $1 million if you do this job right. My family will starve if you
 
     const menuItems = output?.choices[0]?.message?.content;
 
-    // Defining the schema we want our data in
-    const menuSchema = z.object({
-        meetingNotes: z.array(z.string()),
-        summary: z.string(),
-        actionItems: z.array(
-            z.object({
-                assignee: z.string(),
-                dueDate: z.date(),
-                actionItem: z.string(),
-            })
-        ),
-        potentialActionItems: z.array(
-            z.object({
-                assignee: z.string(),
-                dueDate: z.date(),
-                actionItem: z.string(),
-            })
-        ),
-    });
+   
     const jsonSchema = zodToJsonSchema(menuSchema, "menuSchema");
 
   const extract = await together.chat.completions.create({
