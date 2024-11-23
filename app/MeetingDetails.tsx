@@ -46,9 +46,6 @@ export const MeetingDetails = ({
               </AccordionTrigger>
             </CardHeader>
             <AccordionContent>
-              <CardDescription>
-                Highlights from the meeting notes
-              </CardDescription>
               <CardContent>
                 <ul className="list-disc">
                   {data.meetingNotes.map((note, index) => (
@@ -71,16 +68,27 @@ export const MeetingDetails = ({
               </AccordionTrigger>
             </CardHeader>
             <AccordionContent>
-              <CardDescription>Tasks to be completed</CardDescription>
               <CardContent>
-                <ul>
-                  {data.actionItems.map((item, index) => (
-                    <li key={index}>
-                      <strong>{item.assignee}</strong> - {item.actionItem} (Due:{" "}
-                      {new Date(item.dueDate).toLocaleDateString()})
-                    </li>
-                  ))}
-                </ul>
+              <table className="table-auto border-collapse border border-gray-200">
+              <thead>
+                <tr>
+                  <th className="border border-gray-300 px-4 py-2">Assignee</th>
+                  <th className="border border-gray-300 px-4 py-2">Action Item</th>
+                  <th className="border border-gray-300 px-4 py-2">Due Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.actionItems.map((item, index) => (
+                  <tr key={index}>
+                    <td className="border border-gray-300 px-4 py-2">{item.assignee}</td>
+                    <td className="border border-gray-300 px-4 py-2">{item.actionItem}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {new Date(item.dueDate).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
               </CardContent>
               <CardFooter>
                 <p>Total Action Items: {data.actionItems.length}</p>
@@ -97,16 +105,27 @@ export const MeetingDetails = ({
               </AccordionTrigger>
             </CardHeader>
             <AccordionContent>
-              <CardDescription>Ideas for future tasks</CardDescription>
               <CardContent>
-                <ul>
-                  {data.potentialActionItems.map((item, index) => (
-                    <li key={index}>
-                      <strong>{item.assignee}</strong> - {item.actionItem} (Due:{" "}
-                      {new Date(item.dueDate).toLocaleDateString()})
-                    </li>
-                  ))}
-                </ul>
+                <table className="table-auto border-collapse border border-gray-200">
+              <thead>
+                <tr>
+                  <th className="border border-gray-300 px-4 py-2">Assignee</th>
+                  <th className="border border-gray-300 px-4 py-2">Action Item</th>
+                  <th className="border border-gray-300 px-4 py-2">Due Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.potentialActionItems.map((item, index) => (
+                  <tr key={index}>
+                    <td className="border border-gray-300 px-4 py-2">{item.assignee}</td>
+                    <td className="border border-gray-300 px-4 py-2">{item.actionItem}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {new Date(item.dueDate).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
               </CardContent>
               <CardFooter>
                 <p>

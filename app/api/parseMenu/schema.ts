@@ -5,7 +5,7 @@ export const menuSchema = z.object({
     .array(z.string())
     .describe("Key points and highlights from the meeting discussion"),
   summary: z.string().describe("A brief overview of the entire meeting"),
-  title: z.string().describe("A brief title for the meeting"),
+  title: z.optional(z.string().describe("A brief title for the meeting")),
   actionItems: z
     .array(
       z.object({
@@ -39,6 +39,7 @@ export const sampleOutput = {
     "Outlined priorities for the next phase of product development, with a specific focus on testing cycles, addressing known quality assurance issues, and improving time-to-market for new features and updates.",
   ],
   summary: "Comprehensive Q4 Planning and Strategy Session",
+  title: "Q4 Strategic Planning & Team Alignment Meeting",
   actionItems: [
     {
       assignee: "John Smith",
