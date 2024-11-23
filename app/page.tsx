@@ -17,6 +17,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { menuSchema } from "./api/parseMenu/route";
+import { z } from "zod";
+
 
 export interface MenuItem {
   name: string;
@@ -33,8 +36,7 @@ export default function Home() {
   const [status, setStatus] = useState<
     "initial" | "uploading" | "parsing" | "created"
   >("initial");
-  const [parsedMenu, setParsedMenu] = useState<MenuItem[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [parsedResult, setParsedResult] = useState<z.infer<typeof menuSchema>>();
 
   const handleFileChange = async (file: File) => {
     const objectUrl = URL.createObjectURL(file);
@@ -55,21 +57,9 @@ export default function Home() {
     console.log({ json });
 
     setStatus("created");
-    setParsedMenu(json.menu);
+    const validatedOutput = menuSchema.parse(json.menu);
+    setParsedResult(validatedOutput)
   };
-
-  const handleSampleImage = async () => {
-    setStatus("parsing");
-    setMenuUrl(italianMenuUrl);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    setStatus("created");
-    setParsedMenu(italianParsedMenu);
-  };
-
-  const filteredMenu = parsedMenu.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const cardData = {
     meetingNotes: ["Discussed project milestones", "Reviewed budget"],
