@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 import { Copy } from "lucide-react";
 import { z } from "zod";
 import { menuSchema } from "./api/parseMenu/schema";
@@ -22,6 +23,8 @@ export const MeetingDetails = ({
 }: {
   data: z.infer<typeof menuSchema>;
 }) => {
+  const { toast } = useToast();
+
   const formatSummaryData = (data: any): string => {
     let formattedString = `Title: ${data.title}\n`;
     formattedString += `Date: ${data.date}\n`;
@@ -46,10 +49,18 @@ export const MeetingDetails = ({
     navigator.clipboard
       .writeText(humanReadableData)
       .then(() => {
-        alert("Summary copied to clipboard");
+        toast({
+          title: "Success",
+          description: "Summary copied to clipboard",
+        });
       })
       .catch((err) => {
         console.error("Failed to copy to clipboard", err);
+        toast({
+          title: "Error",
+          description: "Failed to copy to clipboard",
+          variant: "destructive",
+        });
       });
   };
 
@@ -58,10 +69,18 @@ export const MeetingDetails = ({
     navigator.clipboard
       .writeText(humanReadableData)
       .then(() => {
-        alert("Key Highlights copied to clipboard");
+        toast({
+          title: "Success",
+          description: "Key Highlights copied to clipboard",
+        });
       })
       .catch((err) => {
         console.error("Failed to copy to clipboard", err);
+        toast({
+          title: "Error",
+          description: "Failed to copy to clipboard",
+          variant: "destructive",
+        });
       });
   };
 
