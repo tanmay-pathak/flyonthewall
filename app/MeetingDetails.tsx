@@ -21,17 +21,13 @@ export const MeetingDetails = ({
   data: z.infer<typeof menuSchema>;
 }) => {
   return (
-    <div className="">
-      <Accordion type={"multiple"} className="w-full">
+      <Accordion type={"multiple"} className="w-full flex flex-col gap-4">
         <AccordionItem value="summary">
           <Card>
             <CardHeader>
               <AccordionTrigger>
-                <CardTitle>
+                <CardTitle className="flex">
                   Summary
-                  <p className="text-sm text-muted-foreground text-left">
-                    A brief summary of the meeting
-                  </p>
                 </CardTitle>
               </AccordionTrigger>
             </CardHeader>
@@ -54,7 +50,7 @@ export const MeetingDetails = ({
                 Highlights from the meeting notes
               </CardDescription>
               <CardContent>
-                <ul>
+                <ul className="list-disc">
                   {data.meetingNotes.map((note, index) => (
                     <li key={index}>{note}</li>
                   ))}
@@ -122,6 +118,5 @@ export const MeetingDetails = ({
           </Card>
         </AccordionItem>
       </Accordion>
-    </div>
   );
 };
