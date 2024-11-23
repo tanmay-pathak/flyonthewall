@@ -80,10 +80,11 @@ export const MeetingDetails = ({
               <CardDescription className="mb-4"><span className="font-bold text-black">Attendees: </span></CardDescription>
               <ul className="list-slash pl-4 mt-2 mb-4">
               {data.attendees.map((attendee, index) => (
-                    <li key={index}>{attendee}</li>
-                ))}
+                <li key={index}>{attendee}</li>
+              ))}
               </ul>
 
+              <CardDescription className="mb-2"><span className="font-bold text-black">TL;DR: </span></CardDescription>
               <p className="mt-2 mb-4">{data.summary}</p>
             </CardContent>
           </AccordionContent>

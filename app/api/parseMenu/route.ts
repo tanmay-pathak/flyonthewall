@@ -40,9 +40,8 @@ IMPORTANT: Return only valid JSON that exactly matches the provided schema forma
         },
         { role: "user", content: text },
       ],
-      model: openai("gpt-4o-mini"),
+      model: openai("gpt-4o-2024-11-20"),
       schema: menuSchema,
-      maxTokens: 4096,
       temperature: 0.7,
     });
 
