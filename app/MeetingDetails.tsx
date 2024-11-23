@@ -60,7 +60,7 @@ export const MeetingDetails = ({
           </CardHeader>
           <AccordionContent>
             <CardContent>
-              <ul className="list-disc pl-4">
+              <ul className="list-slash pl-4">
                 {data.meetingNotes.map((note, index) => (
                   <li key={index} className="mb-2">
                     {note}
