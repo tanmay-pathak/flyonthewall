@@ -8,7 +8,7 @@ export const menuSchema = z.object({
   title: z.string().describe("A brief title for the meeting"),
   attendees: z.array(z.string()).describe("A list of attendees"),
   date: z.string().describe('Date this meeting took place'),
-  length: z.string().describe('Length of the meeting'),
+  length: z.string().describe('Length of the meeting in hour or minutes. E.g. 1 hour 30 min'),
   actionItems: z
     .array(
       z.object({
