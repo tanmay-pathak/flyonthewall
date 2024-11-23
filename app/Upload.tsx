@@ -32,9 +32,9 @@ const Upload = ({ handleFileChange }: Props) => {
                 htmlFor="file-upload"
                 className="relative rounded-md bg-white font-semibold text-gray-800 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-gray-600"
               >
-                <p className="text-xl">Upload your meeting transcript</p>
+                <p className="text-xl">Drop your meeting transcript here</p>
                 <p className="mt-1 font-normal text-gray-600">
-                  Supports txt file
+                  Drag and drop or click to upload a .txt file
                 </p>
               </label>
             </div>
