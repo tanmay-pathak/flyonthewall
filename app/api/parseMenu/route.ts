@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {Together} from "together-ai";
-import {z} from "zod";
 import zodToJsonSchema from "zod-to-json-schema";
+import { menuSchema } from "./schema";
 
 // Add observability if a Helicone key is specified, otherwise skip
 const options: ConstructorParameters<typeof Together>[0] = {};
@@ -14,25 +14,6 @@ if (process.env.HELICONE_API_KEY) {
 }
 
 const together = new Together(options);
-
-export const menuSchema = z.object({
-  meetingNotes: z.array(z.string()),
-  summary: z.string(),
-  actionItems: z.array(
-      z.object({
-          assignee: z.string(),
-          dueDate: z.date(),
-          actionItem: z.string(),
-      })
-  ),
-  potentialActionItems: z.array(
-      z.object({
-          assignee: z.string(),
-          dueDate: z.date(),
-          actionItem: z.string(),
-      })
-  ),
-});
 
 export async function POST(request: Request) {
     const {menuUrl} = await request.json();

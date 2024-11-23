@@ -17,8 +17,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { menuSchema } from "./api/parseMenu/route";
 import { z } from "zod";
+import { menuSchema } from "./api/parseMenu/schema";
 
 
 export interface MenuItem {
