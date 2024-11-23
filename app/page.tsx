@@ -230,7 +230,9 @@ export default function Home() {
               )}
             </Dropzone>
         </div>
-        <div className="w-[2px] bg-gray-300"></div>
+        {parsedResult && (
+          <>
+          <div className="w-[2px] bg-gray-300"></div>
         <div className="flex-1">
             <ScrollArea className="h-full w-full rounded-md p-4 gap-2">
               <div className="flex flex-col gap-4">
@@ -238,6 +240,8 @@ export default function Home() {
               </div>
             </ScrollArea>
         </div>
+          </>
+        )}
       </div>
     </div>
   );
