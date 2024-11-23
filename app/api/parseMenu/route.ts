@@ -1,30 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Together } from "together-ai";
-import { z } from "zod";
+import {Together} from "together-ai";
+import {z} from "zod";
 import zodToJsonSchema from "zod-to-json-schema";
 
 // Add observability if a Helicone key is specified, otherwise skip
 const options: ConstructorParameters<typeof Together>[0] = {};
 if (process.env.HELICONE_API_KEY) {
-  options.baseURL = "https://together.helicone.ai/v1";
-  options.defaultHeaders = {
-    "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,
-    "Helicone-Property-MENU": "true",
-  };
+    options.baseURL = "https://together.helicone.ai/v1";
+    options.defaultHeaders = {
+        "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,
+        "Helicone-Property-MENU": "true",
+    };
 }
 
 const together = new Together(options);
 
 export async function POST(request: Request) {
-  const { menuUrl } = await request.json();
+    const {menuUrl} = await request.json();
 
-  console.log({ menuUrl });
+    console.log({menuUrl});
 
-  if (!menuUrl) {
-    return Response.json({ error: "No menu URL provided" }, { status: 400 });
-  }
+    if (!menuUrl) {
+        return Response.json({error: "No menu URL provided"}, {status: 400});
+    }
 
-  const systemPrompt = `You are given an image of a menu. Your job is to take each item in the menu and convert it into the following JSON format:
+    const systemPrompt = `You are given an image of a menu. Your job is to take each item in the menu and convert it into the following JSON format:
 
 [{"name": "name of menu item", "price": "price of the menu item", "description": "description of menu item"}, ...]
 
@@ -50,21 +50,28 @@ export async function POST(request: Request) {
     ],
   });
 
-  const menuItems = output?.choices[0]?.message?.content;
+    const menuItems = output?.choices[0]?.message?.content;
 
-  // Defining the schema we want our data in
-  const menuSchema = z.array(
-    z.object({
-      name: z.string().describe("The name of the menu item"),
-      price: z.string().describe("The price of the menu item"),
-      description: z
-        .string()
-        .describe(
-          "The description of the menu item. If this doesn't exist, please write a short one sentence description."
+    // Defining the schema we want our data in
+    const menuSchema = z.object({
+        meetingNotes: z.array(z.string()),
+        summary: z.string(),
+        actionItems: z.array(
+            z.object({
+                assignee: z.string(),
+                dueDate: z.date(),
+                actionItem: z.string(),
+            })
         ),
-    })
-  );
-  const jsonSchema = zodToJsonSchema(menuSchema, "menuSchema");
+        potentialActionItems: z.array(
+            z.object({
+                assignee: z.string(),
+                dueDate: z.date(),
+                actionItem: z.string(),
+            })
+        ),
+    });
+    const jsonSchema = zodToJsonSchema(menuSchema, "menuSchema");
 
   const extract = await together.chat.completions.create({
     messages: [
@@ -83,32 +90,32 @@ export async function POST(request: Request) {
     response_format: { type: "json_object", schema: jsonSchema },
   });
 
-  let menuItemsJSON;
-  if (extract?.choices?.[0]?.message?.content) {
-    menuItemsJSON = JSON.parse(extract?.choices?.[0]?.message?.content);
-    console.log({ menuItemsJSON });
-  }
+    let menuItemsJSON;
+    if (extract?.choices?.[0]?.message?.content) {
+        menuItemsJSON = JSON.parse(extract?.choices?.[0]?.message?.content);
+        console.log({menuItemsJSON});
+    }
 
-  // Create an array of promises for parallel image generation
-  const imagePromises = menuItemsJSON.map(async (item: any) => {
-    console.log("processing image for:", item.name);
-    const response = await together.images.create({
-      prompt: `A picture of food for a menu, hyper realistic, highly detailed, ${item.name}, ${item.description}.`,
-      model: "black-forest-labs/FLUX.1-schnell",
-      width: 1024,
-      height: 768,
-      steps: 5,
-      // @ts-expect-error - this is not typed in the API
-      response_format: "base64",
+    // Create an array of promises for parallel image generation
+    const imagePromises = menuItemsJSON.map(async (item: any) => {
+        console.log("processing image for:", item.name);
+        const response = await together.images.create({
+            prompt: `A picture of food for a menu, hyper realistic, highly detailed, ${item.name}, ${item.description}.`,
+            model: "black-forest-labs/FLUX.1-schnell",
+            width: 1024,
+            height: 768,
+            steps: 5,
+            // @ts-expect-error - this is not typed in the API
+            response_format: "base64",
+        });
+        item.menuImage = response.data[0];
+        return item;
     });
-    item.menuImage = response.data[0];
-    return item;
-  });
 
-  // Wait for all images to be generated
-  await Promise.all(imagePromises);
+    // Wait for all images to be generated
+    await Promise.all(imagePromises);
 
-  return Response.json({ menu: menuItemsJSON });
+    return Response.json({menu: menuItemsJSON});
 }
 
 export const maxDuration = 60;
