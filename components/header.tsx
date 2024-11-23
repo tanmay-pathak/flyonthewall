@@ -8,7 +8,7 @@ export function Header() {
           <Link href="/" className="flex items-center space-x-8">
             <img src="/zu-logo.png" alt="zu" className="h-12 w-12"/>
             <span className="h-12 border-r-2 border-black"></span>
-            <span className="text-2xl font-bold">FLY ON THE WALL</span>
+            <span className="text-lg font-bold uppercase italic">Fly on the Wall</span>
           </Link>
         </div>
       </div>
