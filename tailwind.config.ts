@@ -11,6 +11,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        zuPrimary: "#FF3D00",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
