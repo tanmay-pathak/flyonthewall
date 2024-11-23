@@ -14,12 +14,50 @@ import {
 } from "@/components/ui/card";
 import { z } from "zod";
 import { menuSchema } from "./api/parseMenu/schema";
+import {Button} from "@/components/ui/button";
 
 export const MeetingDetails = ({
   data,
 }: {
   data: z.infer<typeof menuSchema>;
 }) => {
+  const formatSummaryData = (data: any): string => {
+    let formattedString = `Title: ${data.title}\n`;
+    formattedString += `Date: ${data.date}\n`;
+    formattedString += `Length: ${data.length}\n`;
+    formattedString += `Attendees:\n`;
+    data.attendees.forEach((attendee: string) => {
+      formattedString += `  - ${attendee}\n`;
+    });
+    formattedString += `Summary: ${data.summary}\n`;
+    return formattedString;
+  };
+
+  const formatKeyHighlightsData = (data: any): string => {
+    let formattedString = `Meeting Notes:\n`;
+    data.meetingNotes.forEach((note: string) => {
+      formattedString += `  - ${note}\n`;
+    });
+    return formattedString;
+  }
+  const copySummary = () => {
+    const humanReadableData = formatSummaryData(data);
+    navigator.clipboard.writeText(humanReadableData).then(() => {
+      alert("Summary copied to clipboard");
+    }).catch(err => {
+      console.error("Failed to copy to clipboard", err);
+    });
+  }
+
+  const copyKeyHighlights = () => {
+    const humanReadableData = formatKeyHighlightsData(data);
+    navigator.clipboard.writeText(humanReadableData).then(() => {
+      alert("Key Highlights copied to clipboard");
+    }).catch(err => {
+      console.error("Failed to copy to clipboard", err);
+    });
+  }
+
   return (
     <Accordion
       type={"multiple"}
@@ -28,10 +66,11 @@ export const MeetingDetails = ({
     >
       <AccordionItem value="summary">
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-start">
             <AccordionTrigger>
               <CardTitle className="flex text-xl font-normal">/ Summary</CardTitle>
             </AccordionTrigger>
+            <Button variant="ghost" onClick={copySummary}><img alt="" src="/copy.png"/></Button>
           </CardHeader>
           <AccordionContent>
             <CardContent>
@@ -53,10 +92,11 @@ export const MeetingDetails = ({
 
       <AccordionItem value="meeting-notes">
         <Card>
-          <CardHeader>
+          <CardHeader className="flex-row items-start">
             <AccordionTrigger>
               <CardTitle className="flex text-xl font-normal">/ Key Highlights</CardTitle>
             </AccordionTrigger>
+            <Button variant="ghost" onClick={copyKeyHighlights}><img alt="" src="/copy.png"/></Button>
           </CardHeader>
           <AccordionContent>
             <CardContent>
