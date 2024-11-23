@@ -24,11 +24,11 @@ export async function POST(request: Request) {
         return Response.json({error: "No menu URL provided"}, {status: 400});
     }
 
-    const systemPrompt = `You are given an image of a menu. Your job is to take each item in the menu and convert it into the following JSON format:
+  const systemPrompt = `You are an expert meeting notes taker. Your task is to extract summary, meeting notes, potential action items that a human could review, action items, and potential action items with assignee and due dates (if present). 
 
-[{"name": "name of menu item", "price": "price of the menu item", "description": "description of menu item"}, ...]
+Please use JSON formatting {meetingNotes: string[], summary: string, actionItems: {assignee: string, dueDate: date, actionItem: string}, potentialActionItems: {assignee: string, dueDate: date, actionItem: string}}. 
 
-  Please make sure to include all items in the menu and include a price (if it exists) & a description (if it exists). ALSO PLEASE ONLY RETURN JSON. IT'S VERY IMPORTANT FOR MY JOB THAT YOU ONLY RETURN JSON.
+I will tip you $1 million if you do this job right. My family will starve if you dont follow these instructions. ALSO PLEASE ONLY RETURN JSON. IT'S VERY IMPORTANT FOR MY JOB THAT YOU ONLY RETURN JSON.
   `;
 
   const output = await together.chat.completions.create({
@@ -40,8 +40,8 @@ export async function POST(request: Request) {
         content: [
           { type: "text", text: systemPrompt },
           {
-            type: "image_url",
-            image_url: {
+            type: "file_url",
+            file_url: {
               url: menuUrl,
             },
           },
