@@ -30,20 +30,22 @@ export const MeetingDetails = ({
         <Card>
           <CardHeader>
             <AccordionTrigger>
-              <CardTitle className="flex">{data.title}</CardTitle>
+              <CardTitle className="flex text-xl font-normal">/ Summary</CardTitle>
             </AccordionTrigger>
           </CardHeader>
           <AccordionContent>
             <CardContent>
-              <CardDescription>Summary</CardDescription>
-              <p className="mt-2 mb-4">{data.summary}</p>
-
-              <CardDescription>Attendees</CardDescription>
-              <ul className="list-disc pl-4 mt-2">
-                {data.attendees.map((attendee, index) => (
-                  <li key={index}>{attendee}</li>
+              <CardDescription className="mb-4"><span className="font-bold text-black">Title: </span>{data.title}</CardDescription>
+              <CardDescription className="mb-4"><span className="font-bold text-black">Date: </span>{data.date}</CardDescription>
+              <CardDescription className="mb-4"><span className="font-bold text-black">Length: </span>{data.length}</CardDescription>
+              <CardDescription className="mb-4"><span className="font-bold text-black">Attendees: </span></CardDescription>
+              <ul className="list-slash pl-4 mt-2 mb-4">
+              {data.attendees.map((attendee, index) => (
+                    <li key={index}>{attendee}</li>
                 ))}
               </ul>
+
+              <p className="mt-2 mb-4">{data.summary}</p>
             </CardContent>
           </AccordionContent>
         </Card>
@@ -53,7 +55,7 @@ export const MeetingDetails = ({
         <Card>
           <CardHeader>
             <AccordionTrigger>
-              <CardTitle>Key Points & Highlights</CardTitle>
+              <CardTitle className="flex text-xl font-normal">/ Key Highlights</CardTitle>
             </AccordionTrigger>
           </CardHeader>
           <AccordionContent>
@@ -79,7 +81,7 @@ export const MeetingDetails = ({
         <Card>
           <CardHeader>
             <AccordionTrigger>
-              <CardTitle>Confirmed Action Items</CardTitle>
+              <CardTitle className="flex text-xl font-normal">/ Action Items</CardTitle>
             </AccordionTrigger>
           </CardHeader>
           <AccordionContent>
@@ -130,7 +132,7 @@ export const MeetingDetails = ({
         <Card>
           <CardHeader>
             <AccordionTrigger>
-              <CardTitle>Proposed Future Tasks</CardTitle>
+              <CardTitle className="flex text-xl font-normal">/ Potential Action Items</CardTitle>
             </AccordionTrigger>
           </CardHeader>
           <AccordionContent>
@@ -181,7 +183,7 @@ export const MeetingDetails = ({
           <Card>
             <CardHeader>
               <AccordionTrigger>
-                <CardTitle>Team Retrospective</CardTitle>
+                <CardTitle className="flex text-xl font-normal">/ Team Retrospective</CardTitle>
               </AccordionTrigger>
             </CardHeader>
 
