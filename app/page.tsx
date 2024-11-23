@@ -45,8 +45,7 @@ export default function Home() {
           </div>
           <div className="max-w-3xl text-center mx-auto">
             <p className="mb-8 text-lg text-gray-500 text-balance ">
-              Copy and paste your meeting notes below to get a summary of the
-              key
+              Copy and paste your meeting notes below to get a summary of the key
             </p>
           </div>
         </>
@@ -68,7 +67,7 @@ export default function Home() {
         {parsedResult && (
           <div className="flex-1">
             <ScrollArea className="h-full w-full rounded-md p-4 gap-2">
-              <MeetingDetails data={parsedResult} />
+                <MeetingDetails data={parsedResult} />
             </ScrollArea>
           </div>
         )}

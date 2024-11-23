@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   }
 
   // Return sample output in non-production environments
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.MOCK_API === "true") {
     return Response.json(sampleOutput);
   }
 

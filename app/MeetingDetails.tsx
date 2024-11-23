@@ -27,13 +27,20 @@ export const MeetingDetails = ({
             <CardHeader>
               <AccordionTrigger>
                 <CardTitle className="flex">
-                  Summary
+                  MEETING TITLE
                 </CardTitle>
               </AccordionTrigger>
             </CardHeader>
             <AccordionContent>
               <CardContent>
+                Summary
                 <p>{data.summary}</p>
+                Attendees
+                <ul className="list-disc">
+                  {data.attendees.map((note, index) => (
+                    <li key={index}>{note}</li>
+                  ))}
+                </ul>
               </CardContent>
             </AccordionContent>
           </Card>

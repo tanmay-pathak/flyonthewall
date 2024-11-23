@@ -5,7 +5,10 @@ export const menuSchema = z.object({
     .array(z.string())
     .describe("Key points and highlights from the meeting discussion"),
   summary: z.string().describe("A brief overview of the entire meeting"),
-  title: z.optional(z.string().describe("A brief title for the meeting")),
+  title: z.string().describe("A brief title for the meeting"),
+  attendees: z
+  .array(z.string())
+  .describe("A list of attendees"),
   actionItems: z
     .array(
       z.object({
@@ -40,6 +43,7 @@ export const sampleOutput = {
   ],
   summary: "Comprehensive Q4 Planning and Strategy Session",
   title: "Q4 Strategic Planning & Team Alignment Meeting",
+  attendees: ["John Smith", "Sarah Jones", "Emily Davis", "Mike Johnson", "Lisa Chen", "Mark Thompson"],
   actionItems: [
     {
       assignee: "John Smith",
