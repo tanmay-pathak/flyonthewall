@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   `;
 
   const output = await together.chat.completions.create({
-    model: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
+    model: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
     messages: [
       {
         role: "user",
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
         content: menuItems!,
       },
     ],
-    model: "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+    model: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
     // @ts-expect-error - this is not typed in the API
     response_format: { type: "json_object", schema: jsonSchema },
   });
