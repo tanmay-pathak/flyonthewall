@@ -192,7 +192,7 @@ export default function Home() {
 
   return (
     <div className="container text-center px-4 py-8 bg-white max-w-screen-xl mx-auto">
-      <div className="max-w-2xl text-center mx-auto sm:mt-20 mt-2">
+      <div className="max-w-2xl text-center mx-auto mt-2">
         <h1 className="mb-6 text-balance text-6xl font-bold text-zinc-800">
           Meeting Summarizer
         </h1>
