@@ -27,6 +27,26 @@ export default function Home() {
     if (stored) {
       setPreviousMeetings(JSON.parse(stored));
     }
+
+    // Check URL hash for shared meeting data
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      try {
+        const decodedData = JSON.parse(decodeURIComponent(hash));
+        const parsedData = meetingSchema.parse(decodedData);
+        setStatus("created");
+        setParsedResult(parsedData);
+
+        // Save decoded meeting to localStorage
+        const newMeetings = stored
+          ? [...JSON.parse(stored), parsedData]
+          : [parsedData];
+        localStorage.setItem("meetings", JSON.stringify(newMeetings));
+        setPreviousMeetings(newMeetings);
+      } catch (error) {
+        console.error("Failed to parse shared meeting data:", error);
+      }
+    }
   }, []);
 
   const handleFileChange = async (file: File) => {
@@ -49,6 +69,11 @@ export default function Home() {
     }
   };
 
+  const handleMeetingSelect = (meeting: z.infer<typeof meetingSchema>) => {
+    setStatus("created");
+    setParsedResult(meeting);
+  };
+
   return (
     <div className="container px-4 py-8 bg-white max-w-screen-lg mx-auto">
       {status === "initial" && <Hero />}
@@ -60,10 +85,7 @@ export default function Home() {
             </div>
             <PreviousMeetingsList
               meetings={previousMeetings}
-              onMeetingSelect={(meeting) => {
-                setStatus("created");
-                setParsedResult(meeting);
-              }}
+              onMeetingSelect={handleMeetingSelect}
               onMeetingDelete={(index) => {
                 const newMeetings = previousMeetings.filter(
                   (_, i) => i !== index
