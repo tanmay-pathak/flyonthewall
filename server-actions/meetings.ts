@@ -2,7 +2,7 @@
 
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
-import { menuSchema, sampleOutput } from "./schema";
+import { meetingSchema, sampleOutput } from "./schema";
 
 export async function parseMeetingNotes(text: string) {
   if (!text) {
@@ -41,7 +41,7 @@ IMPORTANT: Return only valid JSON that exactly matches the provided schema forma
         { role: "user", content: text },
       ],
       model: openai("gpt-4o-mini"),
-      schema: menuSchema,
+      schema: meetingSchema,
       temperature: 0.7,
     });
 

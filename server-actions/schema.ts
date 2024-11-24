@@ -1,19 +1,27 @@
 import { z } from "zod";
 
-export const menuSchema = z.object({
+export const meetingSchema = z.object({
   meetingNotes: z
     .array(z.string())
     .describe("Key points and highlights from the meeting discussion"),
   summary: z.string().describe("A brief overview of the entire meeting"),
   title: z.string().describe("A brief title for the meeting"),
   attendees: z.array(z.string()).describe("A list of attendees"),
-  date: z.string().describe('Date this meeting took place'),
-  length: z.string().describe('Length of the meeting in hour or minutes. E.g. 1 hour 30 min'),
+  date: z.string().describe("Date this meeting took place"),
+  length: z
+    .string()
+    .describe("Length of the meeting in hour or minutes. E.g. 1 hour 30 min"),
   actionItems: z
     .array(
       z.object({
         assignee: z.string().describe("Person responsible for the task"),
-        dueDate: z.optional(z.string().describe("Deadline for completing the task - do not se this if no date is avaliable")),
+        dueDate: z.optional(
+          z
+            .string()
+            .describe(
+              "Deadline for completing the task - do not se this if no date is avaliable"
+            )
+        ),
         actionItem: z
           .string()
           .describe("Description of the task to be completed"),
@@ -24,7 +32,13 @@ export const menuSchema = z.object({
     .array(
       z.object({
         assignee: z.string().describe("Suggested person to handle the task"),
-        dueDate: z.optional(z.string().describe("Proposed deadline for the task - do not se this if no date is avaliable")),
+        dueDate: z.optional(
+          z
+            .string()
+            .describe(
+              "Proposed deadline for the task - do not se this if no date is avaliable"
+            )
+        ),
         actionItem: z.string().describe("Description of the potential task"),
       })
     )
@@ -78,8 +92,8 @@ export const sampleOutput = {
     "Lisa Chen",
     "Mark Thompson",
   ],
-  date: 'Nov 23 2024',
-  length: '1 hour',
+  date: "Nov 23 2024",
+  length: "1 hour",
   actionItems: [
     {
       assignee: "John Smith",
