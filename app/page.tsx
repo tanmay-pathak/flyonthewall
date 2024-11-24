@@ -4,10 +4,10 @@ import Flies from "@/components/Flies";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
 import { z } from "zod";
-import { MeetingDetails } from "./MeetingDetails";
-import { parseMeetingNotes } from "./server-actions/meetings";
-import { menuSchema } from "./server-actions/schema";
-import Upload from "./Upload";
+import { MeetingDetails } from "../components/MeetingDetails";
+import Upload from "../components/Upload";
+import { parseMeetingNotes } from "../server-actions/meetings";
+import { menuSchema } from "../server-actions/schema";
 
 export default function Home() {
   const [status, setStatus] = useState<

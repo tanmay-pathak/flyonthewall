@@ -16,7 +16,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Copy } from "lucide-react";
 import { z } from "zod";
-import { menuSchema } from "./server-actions/schema";
+import { menuSchema } from "../server-actions/schema";
 
 export const MeetingDetails = ({
   data,
