@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Copy } from "lucide-react";
+import React from "react";
 import { z } from "zod";
 import { meetingSchema } from "../server-actions/schema";
 
@@ -326,9 +327,9 @@ export const MeetingDetails = ({
                   <tbody>
                     {data.retro?.participants.map(
                       (participant, participantIndex) => (
-                        <>
+                        <React.Fragment key={`participant-${participantIndex}`}>
                           {participant.items.map((item, itemIndex) => (
-                            <tr key={itemIndex}>
+                            <tr key={`${participantIndex}-${itemIndex}`}>
                               <td
                                 className={`border border-gray-300 px-4 py-2 ${
                                   itemIndex === 0 ? "font-semibold" : ""
@@ -344,7 +345,7 @@ export const MeetingDetails = ({
                               </td>
                             </tr>
                           ))}
-                        </>
+                        </React.Fragment>
                       )
                     )}
                   </tbody>
