@@ -4,50 +4,147 @@ import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { meetingSchema, sampleOutput } from "./schema";
 
-export async function parseMeetingNotes(text: string) {
-  if (!text) {
-    throw new Error("No text provided");
+export async function getSummaryData(text: string) {
+  if (process.env.MOCK_API)
+    return {
+      title: sampleOutput.title,
+      summary: sampleOutput.summary,
+      date: sampleOutput.date,
+      length: sampleOutput.length,
+      attendees: sampleOutput.attendees,
+    };
+
+  const summarySchema = meetingSchema.pick({
+    title: true,
+    summary: true,
+    date: true,
+    length: true,
+    attendees: true,
+  });
+
+  const { object } = await generateObject({
+    messages: [
+      {
+        role: "system",
+        content:
+          "Extract the meeting summary details including title, summary, date, length and attendees.",
+      },
+      { role: "user", content: text },
+    ],
+    model: openai("gpt-4o-mini"),
+    schema: summarySchema,
+    temperature: 0.7,
+  });
+
+  return object;
+}
+
+export async function getKeyHighlightsData(text: string) {
+  if (process.env.MOCK_API)
+    return {
+      meetingNotes: sampleOutput.meetingNotes,
+    };
+  const highlightsSchema = meetingSchema.pick({
+    meetingNotes: true,
+  });
+
+  const { object } = await generateObject({
+    messages: [
+      {
+        role: "system",
+        content:
+          "Extract the key highlights and discussion points from the meeting notes.",
+      },
+      { role: "user", content: text },
+    ],
+    model: openai("gpt-4o-mini"),
+    schema: highlightsSchema,
+    temperature: 0.7,
+  });
+
+  return object;
+}
+
+export async function getActionItemsData(text: string) {
+  if (process.env.MOCK_API)
+    return {
+      actionItems: sampleOutput.actionItems,
+    };
+  const actionItemsSchema = meetingSchema.pick({
+    actionItems: true,
+  });
+
+  const { object } = await generateObject({
+    messages: [
+      {
+        role: "system",
+        content:
+          "Extract confirmed action items with assignees and due dates from the meeting notes.",
+      },
+      { role: "user", content: text },
+    ],
+    model: openai("gpt-4o-mini"),
+    schema: actionItemsSchema,
+    temperature: 0.7,
+  });
+
+  return object;
+}
+
+export async function getPotentialActionItemsData(text: string) {
+  if (process.env.MOCK_API)
+    return {
+      potentialActionItems: sampleOutput.potentialActionItems,
+    };
+  const potentialItemsSchema = meetingSchema.pick({
+    potentialActionItems: true,
+  });
+
+  const { object } = await generateObject({
+    messages: [
+      {
+        role: "system",
+        content:
+          "Extract potential/discussed action items that were not firmly committed to.",
+      },
+      { role: "user", content: text },
+    ],
+    model: openai("gpt-4o-mini"),
+    schema: potentialItemsSchema,
+    temperature: 0.7,
+  });
+
+  return object;
+}
+
+export async function getRetroData(text: string) {
+  // Check first few lines for retro keyword
+  const firstFewLines = text.split("\n").slice(0, 3).join("\n").toLowerCase();
+  if (!firstFewLines.includes("retro")) {
+    return null;
   }
 
-  // Return sample output in non-production environments
-  if (process.env.MOCK_API === "true") {
-    return sampleOutput;
-  }
+  if (process.env.MOCK_API)
+    return {
+      retro: sampleOutput.retro,
+    };
+  const retroSchema = meetingSchema.pick({
+    retro: true,
+  });
 
-  const systemPrompt = `You are an expert meeting notes taker and professional meeting facilitator.
+  const { object } = await generateObject({
+    messages: [
+      {
+        role: "system",
+        content:
+          "Extract retro feedback from participants, categorized as loves/longed for/loathed/learned.",
+      },
+      { role: "user", content: text },
+    ],
+    model: openai("gpt-4o-mini"),
+    schema: retroSchema,
+    temperature: 0.7,
+  });
 
-Your task is to analyze meeting transcripts and extract key information in a structured format. Please include:
-
-- A clear, concise title that captures the meeting's purpose
-- A comprehensive summary of the main discussion points
-- Key meeting notes highlighting important decisions and topics covered
-- Confirmed action items with assignees and due dates (when specified)
-- Potential action items that were discussed but not firmly committed to
-- List of all meeting attendees
-- Meeting date and length
-- For retro meetings only: Participant feedback categorized as loves/longed for/loathed/learned
-
-Focus on being specific and actionable in your notes. Capture both explicit assignments and implicit tasks that emerged from the discussion.
-
-IMPORTANT: Return only valid JSON that exactly matches the provided schema format. Do not include any explanatory text or markdown formatting.`;
-
-  try {
-    const { object } = await generateObject({
-      messages: [
-        {
-          role: "system",
-          content: systemPrompt,
-        },
-        { role: "user", content: text },
-      ],
-      model: openai("gpt-4o-mini"),
-      schema: meetingSchema,
-      temperature: 0.7,
-    });
-
-    return object;
-  } catch (error) {
-    console.error("Error generating response:", error);
-    throw new Error("Failed to process meeting notes");
-  }
+  return object;
 }
