@@ -1,9 +1,10 @@
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
+import PlausibleProvider from "next-plausible";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] });
 const title = "Meeting Notes Assistant";
@@ -44,6 +45,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <PlausibleProvider
+          domain="flyonthewall.vercel.app"
+          customDomain="plausible.tanmaypathak.com"
+          selfHosted={true}
+        />
+      </head>
       <body
         className={`${inter.className} flex flex-col min-h-screen bg-white text-gray-800`}
       >
