@@ -3,6 +3,7 @@
 import Flies from "@/components/Flies";
 import Hero from "@/components/Hero";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { MeetingDetails } from "../components/MeetingDetails";
@@ -57,26 +58,40 @@ export default function Home() {
             <div className="flex-1 p-4">
               <Upload handleFileChange={handleFileChange} />
             </div>
-            {previousMeetings.length > 0 && (
-              <div className="flex-1 p-4">
-                <h2 className="text-xl font-bold mb-4">Previous Meetings</h2>
-                <div className="space-y-2">
-                  {previousMeetings.map((meeting, index) => (
-                    <div
-                      key={index}
-                      className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                      onClick={() => {
-                        setParsedResult(meeting);
-                        setStatus("created");
-                      }}
-                    >
-                      <h3 className="font-semibold">{meeting.title}</h3>
-                      <p className="text-gray-600">{meeting.date}</p>
-                    </div>
-                  ))}
+            <div className="space-y-2">
+              {previousMeetings.map((meeting, index) => (
+                <div
+                  key={index}
+                  className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer relative"
+                  onClick={() => {
+                    setStatus("created");
+                    setParsedResult(meeting);
+                  }}
+                >
+                  <div
+                    className="absolute top-2 group right-2 p-1 hover:bg-destructive rounded-full"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const newMeetings = previousMeetings.filter(
+                        (_, i) => i !== index
+                      );
+                      localStorage.setItem(
+                        "meetings",
+                        JSON.stringify(newMeetings)
+                      );
+                      setPreviousMeetings(newMeetings);
+                    }}
+                  >
+                    <X
+                      size={16}
+                      className="text-gray-500 group-hover:text-white"
+                    />
+                  </div>
+                  <h3 className="font-semibold">{meeting.title}</h3>
+                  <p className="text-gray-600">{meeting.date}</p>
                 </div>
-              </div>
-            )}
+              ))}
+            </div>
           </>
         )}
         {(status === "uploading" || status === "parsing") && <Flies />}
