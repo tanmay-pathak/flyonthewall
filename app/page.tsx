@@ -64,7 +64,11 @@ export default function Home() {
                   {previousMeetings.map((meeting, index) => (
                     <div
                       key={index}
-                      className="p-4 border rounded-lg hover:bg-gray-50"
+                      className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                      onClick={() => {
+                        setParsedResult(meeting);
+                        setStatus("created");
+                      }}
                     >
                       <h3 className="font-semibold">{meeting.title}</h3>
                       <p className="text-gray-600">{meeting.date}</p>
