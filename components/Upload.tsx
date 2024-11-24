@@ -1,4 +1,4 @@
-import { DocumentTextIcon } from "@heroicons/react/24/solid";
+import { FileText } from "lucide-react";
 import Dropzone from "react-dropzone";
 
 type Props = {
@@ -23,10 +23,7 @@ const Upload = ({ handleFileChange }: Props) => {
         >
           <input {...getInputProps()} />
           <div className="text-center">
-            <DocumentTextIcon
-              className="mx-auto h-12 w-12 text-gray-300"
-              aria-hidden="true"
-            />
+            <FileText className="mx-auto size-12 text-gray-300" />
             <div className="mt-4 flex text-sm leading-6 text-gray-600">
               <label
                 htmlFor="file-upload"
