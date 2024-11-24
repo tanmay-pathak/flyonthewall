@@ -5,48 +5,49 @@ import Hero from "@/components/Hero";
 import { PreviousMeetingsList } from "@/components/PreviousMeetings";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useState } from "react";
-import { z } from "zod";
 import { MeetingDetails } from "../components/MeetingDetails";
 import Upload from "../components/Upload";
-import { parseMeetingNotes } from "../server-actions/meetings";
-import { meetingSchema } from "../server-actions/schema";
 
 export default function Home() {
   const [status, setStatus] = useState<
     "initial" | "uploading" | "parsing" | "created"
   >("initial");
-  const [parsedResult, setParsedResult] =
-    useState<z.infer<typeof meetingSchema>>();
-  const [previousMeetings, setPreviousMeetings] = useState<
-    z.infer<typeof meetingSchema>[]
-  >([]);
+  const [meetingId, setMeetingId] = useState<string>();
+  const [previousMeetingIds, setPreviousMeetingIds] = useState<string[]>([]);
 
   useEffect(() => {
-    // Load previous meetings from localStorage on component mount
-    const stored = localStorage.getItem("meetings");
+    // Load previous meeting IDs from localStorage on component mount
+    const stored = localStorage.getItem("meetingIds");
     if (stored) {
-      setPreviousMeetings(JSON.parse(stored));
+      setPreviousMeetingIds(JSON.parse(stored));
     }
   }, []);
 
   const handleFileChange = async (file: File) => {
     setStatus("uploading");
     const text = await file.text();
-    setStatus("parsing");
 
-    const result = await parseMeetingNotes(text);
-    if (result) {
-      setStatus("created");
-      setParsedResult(result as z.infer<typeof meetingSchema>);
+    const id = crypto.randomUUID();
+    const meeting = {
+      id,
+      fullText: text,
+    };
 
-      // Save to localStorage
-      const newMeetings = [
-        ...previousMeetings,
-        result as z.infer<typeof meetingSchema>,
-      ];
-      localStorage.setItem("meetings", JSON.stringify(newMeetings));
-      setPreviousMeetings(newMeetings);
-    }
+    // Save meeting data
+    const meetings = localStorage.getItem("meetings");
+    const existingMeetings = meetings ? JSON.parse(meetings) : [];
+    localStorage.setItem(
+      "meetings",
+      JSON.stringify([...existingMeetings, meeting])
+    );
+
+    // Save meeting ID
+    const newMeetingIds = [...previousMeetingIds, id];
+    localStorage.setItem("meetingIds", JSON.stringify(newMeetingIds));
+    setPreviousMeetingIds(newMeetingIds);
+
+    setStatus("created");
+    setMeetingId(id);
   };
 
   return (
@@ -59,26 +60,29 @@ export default function Home() {
               <Upload handleFileChange={handleFileChange} />
             </div>
             <PreviousMeetingsList
-              meetings={previousMeetings}
-              onMeetingSelect={(meeting) => {
+              meetings={previousMeetingIds}
+              onMeetingSelect={(id) => {
                 setStatus("created");
-                setParsedResult(meeting);
+                setMeetingId(id);
               }}
               onMeetingDelete={(index) => {
-                const newMeetings = previousMeetings.filter(
+                const newMeetingIds = previousMeetingIds.filter(
                   (_, i) => i !== index
                 );
-                localStorage.setItem("meetings", JSON.stringify(newMeetings));
-                setPreviousMeetings(newMeetings);
+                localStorage.setItem(
+                  "meetingIds",
+                  JSON.stringify(newMeetingIds)
+                );
+                setPreviousMeetingIds(newMeetingIds);
               }}
             />
           </>
         )}
         {(status === "uploading" || status === "parsing") && <Flies />}
-        {parsedResult && (
+        {meetingId && (
           <div className="flex-1">
             <ScrollArea className="h-full w-full rounded-md p-4 gap-2">
-              <MeetingDetails data={parsedResult} />
+              <MeetingDetails meetingId={meetingId} />
             </ScrollArea>
           </div>
         )}
