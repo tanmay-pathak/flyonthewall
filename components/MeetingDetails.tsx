@@ -223,9 +223,22 @@ export const MeetingDetails = ({
                 <Button
                   variant="ghost"
                   onClick={() =>
-                    navigator.clipboard.writeText(
-                      JSON.stringify(data.actionItems, null, 2)
-                    )
+                    navigator.clipboard
+                      .writeText(JSON.stringify(data.actionItems, null, 2))
+                      .then(() => {
+                        toast({
+                          title: "Success",
+                          description: "Action items copied to clipboard",
+                        });
+                      })
+                      .catch((err) => {
+                        console.error("Failed to copy to clipboard", err);
+                        toast({
+                          title: "Error",
+                          description: "Failed to copy to clipboard",
+                          variant: "destructive",
+                        });
+                      })
                   }
                 >
                   <Copy className="h-4 w-4" />
@@ -285,11 +298,27 @@ export const MeetingDetails = ({
                 </p>
                 <Button
                   variant="ghost"
-                  onClick={() =>
-                    navigator.clipboard.writeText(
-                      JSON.stringify(data.potentialActionItems, null, 2)
-                    )
-                  }
+                  onClick={() => {
+                    navigator.clipboard
+                      .writeText(
+                        JSON.stringify(data.potentialActionItems, null, 2)
+                      )
+                      .then(() => {
+                        toast({
+                          title: "Success",
+                          description:
+                            "Potential action items copied to clipboard",
+                        });
+                      })
+                      .catch((err) => {
+                        console.error("Failed to copy to clipboard", err);
+                        toast({
+                          title: "Error",
+                          description: "Failed to copy to clipboard",
+                          variant: "destructive",
+                        });
+                      });
+                  }}
                 >
                   <Copy className="h-4 w-4" />
                 </Button>
@@ -359,11 +388,24 @@ export const MeetingDetails = ({
                   </p>
                   <Button
                     variant="ghost"
-                    onClick={() =>
-                      navigator.clipboard.writeText(
-                        JSON.stringify(data.retro, null, 2)
-                      )
-                    }
+                    onClick={() => {
+                      navigator.clipboard
+                        .writeText(JSON.stringify(data.retro, null, 2))
+                        .then(() => {
+                          toast({
+                            title: "Success",
+                            description: "Retro data copied to clipboard",
+                          });
+                        })
+                        .catch((err) => {
+                          console.error("Failed to copy to clipboard", err);
+                          toast({
+                            title: "Error",
+                            description: "Failed to copy to clipboard",
+                            variant: "destructive",
+                          });
+                        });
+                    }}
                   >
                     <Copy className="h-4 w-4" />
                   </Button>
