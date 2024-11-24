@@ -1,17 +1,17 @@
+"use server";
+
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { menuSchema, sampleOutput } from "./schema";
 
-export async function POST(request: Request) {
-  const { text } = await request.json();
-
+export async function parseMeetingNotes(text: string) {
   if (!text) {
-    return Response.json({ error: "No text provided" }, { status: 400 });
+    throw new Error("No text provided");
   }
 
   // Return sample output in non-production environments
   if (process.env.MOCK_API === "true") {
-    return Response.json(sampleOutput);
+    return sampleOutput;
   }
 
   const systemPrompt = `You are an expert meeting notes taker and professional meeting facilitator.
@@ -45,14 +45,9 @@ IMPORTANT: Return only valid JSON that exactly matches the provided schema forma
       temperature: 0.7,
     });
 
-    return Response.json(object);
+    return object;
   } catch (error) {
     console.error("Error generating response:", error);
-    return Response.json(
-      { error: "Failed to process meeting notes" },
-      { status: 500 }
-    );
+    throw new Error("Failed to process meeting notes");
   }
 }
-
-export const maxDuration = 60;

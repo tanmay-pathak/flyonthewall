@@ -4,8 +4,9 @@ import Flies from "@/components/Flies";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
 import { z } from "zod";
-import { menuSchema } from "./api/parseMenu/schema";
 import { MeetingDetails } from "./MeetingDetails";
+import { parseMeetingNotes } from "./server-actions/meetings";
+import { menuSchema } from "./server-actions/schema";
 import Upload from "./Upload";
 
 export default function Home() {
@@ -20,17 +21,11 @@ export default function Home() {
     const text = await file.text();
     setStatus("parsing");
 
-    const res = await fetch("/api/parseMenu", {
-      method: "POST",
-      body: JSON.stringify({
-        text: text,
-      }),
-    });
-    const json = await res.json();
-
-    setStatus("created");
-    const validatedOutput = menuSchema.parse(json);
-    setParsedResult(validatedOutput);
+    const result = await parseMeetingNotes(text);
+    if (result) {
+      setStatus("created");
+      setParsedResult(result as z.infer<typeof menuSchema>);
+    }
   };
 
   return (
