@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { formatKeyHighlightsData, formatSummaryData } from "@/lib/formatters";
 import { Copy } from "lucide-react";
 import React from "react";
 import { z } from "zod";
@@ -26,27 +27,7 @@ export const MeetingDetails = ({
 }) => {
   const { toast } = useToast();
 
-  const formatSummaryData = (data: any): string => {
-    let formattedString = `Title: ${data.title}\n`;
-    formattedString += `Date: ${data.date}\n`;
-    formattedString += `Length: ${data.length}\n`;
-    formattedString += `Attendees:\n`;
-    data.attendees.forEach((attendee: string) => {
-      formattedString += `  - ${attendee}\n`;
-    });
-    formattedString += `Summary: ${data.summary}\n`;
-    return formattedString;
-  };
-
-  const formatKeyHighlightsData = (data: any): string => {
-    let formattedString = `Meeting Notes:\n`;
-    data.meetingNotes.forEach((note: string) => {
-      formattedString += `  - ${note}\n`;
-    });
-    return formattedString;
-  };
-
-  const copySummary = () => {
+  const copySummary = (data: any) => {
     const humanReadableData = formatSummaryData(data);
     navigator.clipboard
       .writeText(humanReadableData)
@@ -132,7 +113,7 @@ export const MeetingDetails = ({
             <CardFooter className="flex justify-between">
               <p className="text-sm text-gray-500">Summary Details</p>
               <div className="flex gap-2">
-                <Button variant="ghost" onClick={copySummary}>
+                <Button variant="ghost" onClick={() => copySummary(data)}>
                   <Copy className="h-4 w-4" />
                 </Button>
               </div>
