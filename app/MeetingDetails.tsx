@@ -44,6 +44,7 @@ export const MeetingDetails = ({
     });
     return formattedString;
   };
+
   const copySummary = () => {
     const humanReadableData = formatSummaryData(data);
     navigator.clipboard
