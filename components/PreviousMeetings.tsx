@@ -15,37 +15,49 @@ export function PreviousMeetingsList({
   onMeetingDelete,
 }: PreviousMeetingsListProps) {
   return (
-    <div className="space-y-2">
-      {meetings.map((meeting, index) => (
-        <div
-          key={index}
-          className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer relative"
-          onClick={() => onMeetingSelect(meeting)}
-        >
-          <div className="absolute top-2 right-2 flex gap-2">
-            <div
-              className="group p-1 hover:bg-zuPrimary rounded-full"
-              onClick={() => handleShareURL(meeting)}
-            >
-              <Share2
-                size={16}
-                className="text-gray-500 group-hover:text-white"
-              />
-            </div>
-            <div
-              className="group p-1 hover:bg-zuPrimary rounded-full"
-              onClick={(e) => {
-                e.stopPropagation();
-                onMeetingDelete(index);
-              }}
-            >
-              <X size={16} className="text-gray-500 group-hover:text-white" />
-            </div>
-          </div>
-          <h3 className="font-semibold">{meeting.title}</h3>
-          <p className="text-gray-600">{meeting.date}</p>
+    <div className="space-y-4">
+      <h2 className="text-xl font-semibold">Previous Meetings</h2>
+      {meetings.length === 0 ? (
+        <div className="p-4 border rounded-lg text-center text-gray-500">
+          No previous meetings found. Upload a meeting to get started.
         </div>
-      ))}
+      ) : (
+        <div className="space-y-2">
+          {meetings.map((meeting, index) => (
+            <div
+              key={index}
+              className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer relative"
+              onClick={() => onMeetingSelect(meeting)}
+            >
+              <div className="absolute top-2 right-2 flex gap-2">
+                <div
+                  className="group p-1 hover:bg-zuPrimary rounded-full"
+                  onClick={() => handleShareURL(meeting)}
+                >
+                  <Share2
+                    size={16}
+                    className="text-gray-500 group-hover:text-white"
+                  />
+                </div>
+                <div
+                  className="group p-1 hover:bg-zuPrimary rounded-full"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onMeetingDelete(index);
+                  }}
+                >
+                  <X
+                    size={16}
+                    className="text-gray-500 group-hover:text-white"
+                  />
+                </div>
+              </div>
+              <h3 className="font-semibold">{meeting.title}</h3>
+              <p className="text-gray-600">{meeting.date}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
