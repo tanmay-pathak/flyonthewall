@@ -48,7 +48,7 @@ export default function RootLayout({
       <head>
         <PlausibleProvider
           domain="flyonthewall.vercel.app"
-          customDomain="plausible.tanmaypathak.com"
+          customDomain="https://plausible.tanmaypathak.com"
           selfHosted={true}
         />
       </head>
