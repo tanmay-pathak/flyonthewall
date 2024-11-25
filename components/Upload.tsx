@@ -16,7 +16,7 @@ const Upload = ({ handleFileChange }: Props) => {
     >
       {({ getRootProps, getInputProps, isDragAccept }) => (
         <div
-          className={`flex aspect-video cursor-pointer items-center justify-center rounded-lg border-2 border-dashed ${
+          className={`flex h-64 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed ${
             isDragAccept ? "border-blue-500" : "border-zuPrimary"
           }`}
           {...getRootProps()}
