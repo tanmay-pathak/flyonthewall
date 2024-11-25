@@ -27,7 +27,8 @@ export const meetingSchema = z.object({
           .describe("Description of the task to be completed"),
       })
     )
-    .describe("Confirmed tasks that need to be completed"),
+    .describe("Confirmed tasks that need to be completed")
+    .optional(),
   potentialActionItems: z
     .array(
       z.object({
@@ -42,9 +43,8 @@ export const meetingSchema = z.object({
         actionItem: z.string().describe("Description of the potential task"),
       })
     )
-    .describe(
-      "Possible future tasks that were discussed but not yet confirmed"
-    ),
+    .describe("Possible future tasks that were discussed but not yet confirmed")
+    .optional(),
   retro: z
     .object({
       participants: z
@@ -68,10 +68,10 @@ export const meetingSchema = z.object({
         )
         .describe("List of participants and their contributions to the retro"),
     })
-    .optional()
     .describe(
       "This block is for retro notes. Only populate this portion if the meeting is about a retro"
-    ),
+    )
+    .optional(),
 });
 
 export const sampleOutput = {

@@ -172,160 +172,165 @@ export const MeetingDetails = ({
           </Card>
         </AccordionItem>
 
-        <AccordionItem value="action-items">
-          <Card>
-            <CardHeader>
-              <AccordionTrigger>
-                <CardTitle className="flex text-xl font-normal">
-                  / Action Items
-                </CardTitle>
-              </AccordionTrigger>
-            </CardHeader>
-            <AccordionContent>
-              <CardContent>
-                <table className="w-full table-auto border-collapse border border-gray-200">
-                  <thead>
-                    <tr className="bg-gray-50">
-                      <th className="border border-gray-300 px-4 py-2">
-                        Assignee
-                      </th>
-                      <th className="border border-gray-300 px-4 py-2">
-                        Task Description
-                      </th>
-                      <th className="border border-gray-300 px-4 py-2">
-                        Due Date
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.actionItems.map((item, index) => (
-                      <tr key={index}>
-                        <td className="border border-gray-300 px-4 py-2">
-                          {item.assignee}
-                        </td>
-                        <td className="border border-gray-300 px-4 py-2">
-                          {item.actionItem}
-                        </td>
-                        <td className="border border-gray-300 px-4 py-2">
-                          {item.dueDate
-                            ? new Date(item.dueDate).toLocaleDateString()
-                            : "-"}
-                        </td>
+        {data.actionItems && (
+          <AccordionItem value="action-items">
+            <Card>
+              <CardHeader>
+                <AccordionTrigger>
+                  <CardTitle className="flex text-xl font-normal">
+                    / Action Items
+                  </CardTitle>
+                </AccordionTrigger>
+              </CardHeader>
+              <AccordionContent>
+                <CardContent>
+                  <table className="w-full table-auto border-collapse border border-gray-200">
+                    <thead>
+                      <tr className="bg-gray-50">
+                        <th className="border border-gray-300 px-4 py-2">
+                          Assignee
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2">
+                          Task Description
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2">
+                          Due Date
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <p className="text-sm text-gray-500">
-                  Total Confirmed Tasks: {data.actionItems.length}
-                </p>
-                <Button
-                  variant="ghost"
-                  onClick={() =>
-                    navigator.clipboard
-                      .writeText(JSON.stringify(data.actionItems, null, 2))
-                      .then(() => {
-                        toast({
-                          title: "Success",
-                          description: "Action items copied to clipboard",
-                        });
-                      })
-                      .catch((err) => {
-                        console.error("Failed to copy to clipboard", err);
-                        toast({
-                          title: "Error",
-                          description: "Failed to copy to clipboard",
-                          variant: "destructive",
-                        });
-                      })
-                  }
-                >
-                  <Copy className="h-4 w-4" />
-                </Button>
-              </CardFooter>
-            </AccordionContent>
-          </Card>
-        </AccordionItem>
+                    </thead>
+                    <tbody>
+                      {data.actionItems.map((item, index) => (
+                        <tr key={index}>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {item.assignee}
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {item.actionItem}
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {item.dueDate
+                              ? new Date(item.dueDate).toLocaleDateString()
+                              : "-"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <p className="text-sm text-gray-500">
+                    Total Confirmed Tasks: {data.actionItems.length}
+                  </p>
+                  <Button
+                    variant="ghost"
+                    onClick={() =>
+                      navigator.clipboard
+                        .writeText(JSON.stringify(data.actionItems, null, 2))
+                        .then(() => {
+                          toast({
+                            title: "Success",
+                            description: "Action items copied to clipboard",
+                          });
+                        })
+                        .catch((err) => {
+                          console.error("Failed to copy to clipboard", err);
+                          toast({
+                            title: "Error",
+                            description: "Failed to copy to clipboard",
+                            variant: "destructive",
+                          });
+                        })
+                    }
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </CardFooter>
+              </AccordionContent>
+            </Card>
+          </AccordionItem>
+        )}
 
-        <AccordionItem value="potential-action-items">
-          <Card>
-            <CardHeader>
-              <AccordionTrigger>
-                <CardTitle className="flex text-xl font-normal">
-                  / Potential Action Items
-                </CardTitle>
-              </AccordionTrigger>
-            </CardHeader>
-            <AccordionContent>
-              <CardContent>
-                <table className="w-full table-auto border-collapse border border-gray-200">
-                  <thead>
-                    <tr className="bg-gray-50">
-                      <th className="border border-gray-300 px-4 py-2">
-                        Suggested Assignee
-                      </th>
-                      <th className="border border-gray-300 px-4 py-2">
-                        Proposed Task
-                      </th>
-                      <th className="border border-gray-300 px-4 py-2">
-                        Target Date
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.potentialActionItems.map((item, index) => (
-                      <tr key={index}>
-                        <td className="border border-gray-300 px-4 py-2">
-                          {item.assignee}
-                        </td>
-                        <td className="border border-gray-300 px-4 py-2">
-                          {item.actionItem}
-                        </td>
-                        <td className="border border-gray-300 px-4 py-2">
-                          {item.dueDate
-                            ? new Date(item.dueDate).toLocaleDateString()
-                            : "-"}
-                        </td>
+        {data.potentialActionItems && (
+          <AccordionItem value="potential-action-items">
+            <Card>
+              <CardHeader>
+                <AccordionTrigger>
+                  <CardTitle className="flex text-xl font-normal">
+                    / Potential Action Items
+                  </CardTitle>
+                </AccordionTrigger>
+              </CardHeader>
+              <AccordionContent>
+                <CardContent>
+                  <table className="w-full table-auto border-collapse border border-gray-200">
+                    <thead>
+                      <tr className="bg-gray-50">
+                        <th className="border border-gray-300 px-4 py-2">
+                          Suggested Assignee
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2">
+                          Proposed Task
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2">
+                          Target Date
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <p className="text-sm text-gray-500">
-                  Total Proposed Tasks: {data.potentialActionItems.length}
-                </p>
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    navigator.clipboard
-                      .writeText(
-                        JSON.stringify(data.potentialActionItems, null, 2)
-                      )
-                      .then(() => {
-                        toast({
-                          title: "Success",
-                          description:
-                            "Potential action items copied to clipboard",
+                    </thead>
+                    <tbody>
+                      {data.potentialActionItems.map((item, index) => (
+                        <tr key={index}>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {item.assignee}
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {item.actionItem}
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {item.dueDate
+                              ? new Date(item.dueDate).toLocaleDateString()
+                              : "-"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <p className="text-sm text-gray-500">
+                    Total Proposed Tasks: {data.potentialActionItems.length}
+                  </p>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      navigator.clipboard
+                        .writeText(
+                          JSON.stringify(data.potentialActionItems, null, 2)
+                        )
+                        .then(() => {
+                          toast({
+                            title: "Success",
+                            description:
+                              "Potential action items copied to clipboard",
+                          });
+                        })
+                        .catch((err) => {
+                          console.error("Failed to copy to clipboard", err);
+                          toast({
+                            title: "Error",
+                            description: "Failed to copy to clipboard",
+                            variant: "destructive",
+                          });
                         });
-                      })
-                      .catch((err) => {
-                        console.error("Failed to copy to clipboard", err);
-                        toast({
-                          title: "Error",
-                          description: "Failed to copy to clipboard",
-                          variant: "destructive",
-                        });
-                      });
-                  }}
-                >
-                  <Copy className="h-4 w-4" />
-                </Button>
-              </CardFooter>
-            </AccordionContent>
-          </Card>
-        </AccordionItem>
+                    }}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </CardFooter>
+              </AccordionContent>
+            </Card>
+          </AccordionItem>
+        )}
+
         {data.retro && (
           <AccordionItem value="retro-section">
             <Card>
