@@ -3,7 +3,9 @@
 import Flies from "@/components/Flies";
 import Hero from "@/components/Hero";
 import { PreviousMeetingsList } from "@/components/PreviousMeetings";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { MeetingDetails } from "../components/MeetingDetails";
@@ -20,6 +22,7 @@ export default function Home() {
   const [previousMeetings, setPreviousMeetings] = useState<
     z.infer<typeof meetingSchema>[]
   >([]);
+  const [inputText, setInputText] = useState("");
 
   useEffect(() => {
     // Load previous meetings from localStorage on component mount
@@ -52,8 +55,17 @@ export default function Home() {
   const handleFileChange = async (file: File) => {
     setStatus("uploading");
     const text = await file.text();
-    setStatus("parsing");
+    await processText(text);
+  };
 
+  const handleTextSubmit = async () => {
+    if (!inputText.trim()) return;
+    setStatus("parsing");
+    await processText(inputText);
+    setInputText("");
+  };
+
+  const processText = async (text: string) => {
     const result = await parseMeetingNotes(text);
     if (result) {
       setStatus("created");
@@ -82,6 +94,24 @@ export default function Home() {
           <>
             <div className="flex-1 p-4">
               <Upload handleFileChange={handleFileChange} />
+              <div className="mt-4 space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  Or copy-paste your meeting transcript:
+                </p>
+                <Textarea
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  placeholder="Paste your meeting transcript here..."
+                  className="min-h-[128px]"
+                />
+                <Button
+                  onClick={handleTextSubmit}
+                  disabled={!inputText.trim()}
+                  className="w-full"
+                >
+                  Process Text
+                </Button>
+              </div>
             </div>
             <PreviousMeetingsList
               meetings={previousMeetings}
