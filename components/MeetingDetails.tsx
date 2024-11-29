@@ -208,7 +208,7 @@ export const MeetingDetails = ({
                             {item.actionItem}
                           </td>
                           <td className="border border-gray-300 px-4 py-2">
-                            {item.dueDate
+                            {item.dueDate && item.dueDate !== "null"
                               ? new Date(item.dueDate).toLocaleDateString()
                               : "-"}
                           </td>
@@ -286,7 +286,7 @@ export const MeetingDetails = ({
                             {item.actionItem}
                           </td>
                           <td className="border border-gray-300 px-4 py-2">
-                            {item.dueDate
+                            {item.dueDate && item.dueDate !== "null"
                               ? new Date(item.dueDate).toLocaleDateString()
                               : "-"}
                           </td>

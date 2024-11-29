@@ -15,13 +15,13 @@ export const meetingSchema = z.object({
     .array(
       z.object({
         assignee: z.string().describe("Person responsible for the task"),
-        dueDate: z.optional(
-          z
-            .string()
-            .describe(
-              "Deadline for completing the task - do not se this if no date is avaliable"
-            )
-        ),
+        dueDate: z
+          .string()
+          .nullable()
+          .optional()
+          .describe(
+            "Deadline for completing the task - do not set this if no date is available"
+          ),
         actionItem: z
           .string()
           .describe("Description of the task to be completed"),
@@ -33,13 +33,13 @@ export const meetingSchema = z.object({
     .array(
       z.object({
         assignee: z.string().describe("Suggested person to handle the task"),
-        dueDate: z.optional(
-          z
-            .string()
-            .describe(
-              "Proposed deadline for the task - do not se this if no date is avaliable"
-            )
-        ),
+        dueDate: z
+          .string()
+          .nullable()
+          .optional()
+          .describe(
+            "Proposed deadline for the task - do not set this if no date is available"
+          ),
         actionItem: z.string().describe("Description of the potential task"),
       })
     )
