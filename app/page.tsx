@@ -108,7 +108,19 @@ export default function Home() {
         {parsedResult && (
           <div className="flex-1">
             <ScrollArea className="h-full w-full rounded-md p-4 gap-2">
-              <MeetingDetails data={parsedResult} />
+              <MeetingDetails 
+                data={parsedResult} 
+                onDataChange={(newData) => {
+                  setParsedResult(newData);
+                  
+                  // Update in previousMeetings as well
+                  const newMeetings = previousMeetings.map(meeting => 
+                    meeting.title === newData.title ? newData : meeting
+                  );
+                  localStorage.setItem("meetings", JSON.stringify(newMeetings));
+                  setPreviousMeetings(newMeetings);
+                }}
+              />
             </ScrollArea>
           </div>
         )}

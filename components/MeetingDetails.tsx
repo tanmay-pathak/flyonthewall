@@ -15,15 +15,19 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { formatAsMarkdown } from "@/lib/formatters";
 import { handleShareURL } from "@/lib/utils";
+import cloneDeep from "lodash/cloneDeep";
 import { ArrowLeft, Copy, Download, Share2 } from "lucide-react";
 import React from "react";
 import { z } from "zod";
 import { meetingSchema } from "../server-actions/schema";
+import { AttendeeSelect } from "./AttendeeSelect";
 
 export const MeetingDetails = ({
   data,
+  onDataChange,
 }: {
   data: z.infer<typeof meetingSchema>;
+  onDataChange?: (newData: z.infer<typeof meetingSchema>) => void;
 }) => {
   const { toast } = useToast();
 
@@ -62,6 +66,36 @@ export const MeetingDetails = ({
       title: "Success",
       description: "Meeting notes exported as markdown",
     });
+  };
+
+  const handleAssigneeChange = (actionItemIndex: number, newAssignee: string) => {
+    if (!onDataChange) return;
+    
+    const newData = cloneDeep(data);
+    if (newData.actionItems) {
+      newData.actionItems[actionItemIndex].assignee = newAssignee;
+      onDataChange(newData);
+    }
+  };
+
+  const handlePotentialAssigneeChange = (actionItemIndex: number, newAssignee: string) => {
+    if (!onDataChange) return;
+    
+    const newData = cloneDeep(data);
+    if (newData.potentialActionItems) {
+      newData.potentialActionItems[actionItemIndex].assignee = newAssignee;
+      onDataChange(newData);
+    }
+  };
+
+  const handleRetroParticipantChange = (participantIndex: number, newName: string) => {
+    if (!onDataChange) return;
+    
+    const newData = cloneDeep(data);
+    if (newData.retro?.participants) {
+      newData.retro.participants[participantIndex].name = newName;
+      onDataChange(newData);
+    }
   };
 
   return (
@@ -212,7 +246,12 @@ export const MeetingDetails = ({
                       {data.actionItems.map((item, index) => (
                         <tr key={index} className="hover:bg-gray-50">
                           <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {item.assignee}
+                            <AttendeeSelect
+                              attendees={data.attendees}
+                              value={item.assignee}
+                              onValueChange={(value) => handleAssigneeChange(index, value)}
+                              className="min-w-[150px]"
+                            />
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-900">
                             {item.actionItem}
@@ -267,7 +306,12 @@ export const MeetingDetails = ({
                       {data.potentialActionItems.map((item, index) => (
                         <tr key={index} className="hover:bg-gray-50">
                           <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {item.assignee}
+                            <AttendeeSelect
+                              attendees={data.attendees}
+                              value={item.assignee}
+                              onValueChange={(value) => handlePotentialAssigneeChange(index, value)}
+                              className="min-w-[150px]"
+                            />
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-900">
                             {item.actionItem}
@@ -328,7 +372,14 @@ export const MeetingDetails = ({
                                 <td className={`px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 ${
                                   itemIndex === 0 ? "font-semibold" : ""
                                 }`}>
-                                  {itemIndex === 0 ? participant.name : ""}
+                                  {itemIndex === 0 ? (
+                                    <AttendeeSelect
+                                      attendees={data.attendees}
+                                      value={participant.name}
+                                      onValueChange={(value) => handleRetroParticipantChange(participantIndex, value)}
+                                      className="min-w-[150px]"
+                                    />
+                                  ) : ""}
                                 </td>
                                 <td className="px-4 py-3 text-sm text-gray-900 capitalize">
                                   {item.category}
