@@ -8,15 +8,14 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { formatAsMarkdown } from "@/lib/formatters";
 import { handleShareURL } from "@/lib/utils";
-import { ArrowLeft, Copy, Share2, Download } from "lucide-react";
+import { ArrowLeft, Copy, Download, Share2 } from "lucide-react";
 import React from "react";
 import { z } from "zod";
 import { meetingSchema } from "../server-actions/schema";
@@ -110,31 +109,42 @@ export const MeetingDetails = ({
             </CardHeader>
             <AccordionContent>
               <CardContent>
-                <CardDescription className="mb-4">
-                  <span className="font-bold text-black">Title: </span>
-                  {data.title}
-                </CardDescription>
-                <CardDescription className="mb-4">
-                  <span className="font-bold text-black">Date: </span>
-                  {data.date}
-                </CardDescription>
-                <CardDescription className="mb-4">
-                  <span className="font-bold text-black">Length: </span>
-                  {data.length}
-                </CardDescription>
-                <CardDescription className="mb-4">
-                  <span className="font-bold text-black">Attendees: </span>
-                </CardDescription>
-                <ul className="list-slash pl-4 mt-2 mb-4">
-                  {data.attendees.map((attendee, index) => (
-                    <li key={index}>{attendee}</li>
-                  ))}
-                </ul>
+                <div className="space-y-6">
+                  <div>
+                    <span className="text-sm font-medium text-gray-500 block mb-1">Title</span>
+                    <h3 className="text-xl font-semibold text-gray-900">{data.title}</h3>
+                  </div>
 
-                <CardDescription className="mb-2">
-                  <span className="font-bold text-black">TL;DR: </span>
-                </CardDescription>
-                <p className="mt-2 mb-4">{data.summary}</p>
+                  <div>
+                    <span className="text-sm font-medium text-gray-500 block mb-2">Attendees</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {data.attendees.map((attendee, index) => (
+                        <span 
+                          key={index} 
+                          className="inline-flex items-center px-2.5 py-1 rounded-full text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 transition-colors"
+                        >
+                          {attendee}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <span className="text-sm font-medium text-gray-500 block mb-1">Date</span>
+                      <p className="text-base text-gray-900">{data.date}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-gray-500 block mb-1">Length</span>
+                      <p className="text-base text-gray-900">{data.length}</p>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-gray-200">
+                    <span className="text-sm font-medium text-gray-500 block mb-2">Meeting Summary</span>
+                    <p className="text-base text-gray-900 leading-relaxed whitespace-pre-wrap">{data.summary}</p>
+                  </div>
+                </div>
               </CardContent>
               <CardFooter className="flex justify-between">
                 <p className="text-sm text-gray-500">Summary Details</p>
@@ -154,10 +164,11 @@ export const MeetingDetails = ({
             </CardHeader>
             <AccordionContent>
               <CardContent>
-                <ul className="list-slash pl-4">
+                <ul className="space-y-2">
                   {data.meetingNotes.map((note, index) => (
-                    <li key={index} className="mb-2">
-                      {note}
+                    <li key={index} className="flex items-start pl-4 relative">
+                      <span className="absolute left-0 text-gray-400">/</span>
+                      <span className="text-gray-900">{note}</span>
                     </li>
                   ))}
                 </ul>
@@ -183,30 +194,30 @@ export const MeetingDetails = ({
               </CardHeader>
               <AccordionContent>
                 <CardContent>
-                  <table className="w-full table-auto border-collapse border border-gray-200">
+                  <table className="w-full divide-y divide-gray-200">
                     <thead>
-                      <tr className="bg-gray-50">
-                        <th className="border border-gray-300 px-4 py-2">
+                      <tr>
+                        <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Assignee
                         </th>
-                        <th className="border border-gray-300 px-4 py-2">
+                        <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Task Description
                         </th>
-                        <th className="border border-gray-300 px-4 py-2">
+                        <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Due Date
                         </th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="bg-white divide-y divide-gray-200">
                       {data.actionItems.map((item, index) => (
-                        <tr key={index}>
-                          <td className="border border-gray-300 px-4 py-2">
+                        <tr key={index} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
                             {item.assignee}
                           </td>
-                          <td className="border border-gray-300 px-4 py-2">
+                          <td className="px-4 py-3 text-sm text-gray-900">
                             {item.actionItem}
                           </td>
-                          <td className="border border-gray-300 px-4 py-2">
+                          <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                             {item.dueDate && item.dueDate !== "null"
                               ? new Date(item.dueDate).toLocaleDateString()
                               : "-"}
@@ -238,30 +249,30 @@ export const MeetingDetails = ({
               </CardHeader>
               <AccordionContent>
                 <CardContent>
-                  <table className="w-full table-auto border-collapse border border-gray-200">
+                  <table className="w-full divide-y divide-gray-200">
                     <thead>
-                      <tr className="bg-gray-50">
-                        <th className="border border-gray-300 px-4 py-2">
+                      <tr>
+                        <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Suggested Assignee
                         </th>
-                        <th className="border border-gray-300 px-4 py-2">
+                        <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Proposed Task
                         </th>
-                        <th className="border border-gray-300 px-4 py-2">
+                        <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Target Date
                         </th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="bg-white divide-y divide-gray-200">
                       {data.potentialActionItems.map((item, index) => (
-                        <tr key={index}>
-                          <td className="border border-gray-300 px-4 py-2">
+                        <tr key={index} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
                             {item.assignee}
                           </td>
-                          <td className="border border-gray-300 px-4 py-2">
+                          <td className="px-4 py-3 text-sm text-gray-900">
                             {item.actionItem}
                           </td>
-                          <td className="border border-gray-300 px-4 py-2">
+                          <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                             {item.dueDate && item.dueDate !== "null"
                               ? new Date(item.dueDate).toLocaleDateString()
                               : "-"}
@@ -294,45 +305,41 @@ export const MeetingDetails = ({
 
               <AccordionContent>
                 <CardContent>
-                  <table className="w-full table-auto border-collapse border border-gray-200">
+                  <table className="w-full divide-y divide-gray-200">
                     <thead>
-                      <tr className="bg-gray-50">
-                        <th className="border border-gray-300 px-4 py-2">
+                      <tr>
+                        <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Participant
                         </th>
-                        <th className="border border-gray-300 px-4 py-2">
+                        <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Category
                         </th>
-                        <th className="border border-gray-300 px-4 py-2">
+                        <th className="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Description
                         </th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="bg-white divide-y divide-gray-200">
                       {data.retro?.participants.map(
                         (participant, participantIndex) => (
-                          <React.Fragment
-                            key={`participant-${participantIndex}`}
-                          >
+                          <React.Fragment key={`participant-${participantIndex}`}>
                             {participant.items.map((item, itemIndex) => (
-                              <tr key={`${participantIndex}-${itemIndex}`}>
-                                <td
-                                  className={`border border-gray-300 px-4 py-2 ${
-                                    itemIndex === 0 ? "font-semibold" : ""
-                                  }`}
-                                >
+                              <tr key={`${participantIndex}-${itemIndex}`} className="hover:bg-gray-50">
+                                <td className={`px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 ${
+                                  itemIndex === 0 ? "font-semibold" : ""
+                                }`}>
                                   {itemIndex === 0 ? participant.name : ""}
                                 </td>
-                                <td className="border border-gray-300 px-4 py-2 capitalize">
+                                <td className="px-4 py-3 text-sm text-gray-900 capitalize">
                                   {item.category}
                                 </td>
-                                <td className="border border-gray-300 px-4 py-2">
+                                <td className="px-4 py-3 text-sm text-gray-900">
                                   {item.description}
                                 </td>
                               </tr>
                             ))}
                           </React.Fragment>
-                        ),
+                        )
                       )}
                     </tbody>
                   </table>
