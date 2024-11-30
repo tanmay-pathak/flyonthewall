@@ -39,6 +39,18 @@ export const MeetingDetails = ({
   const [isCopying, setIsCopying] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
 
+  const allAccordionValues = [
+    "summary",
+    "action-items",
+    "decisions",
+    "meeting-notes",
+    "followups",
+    "potential-action-items",
+    "unresolved",
+    "retro-section",
+    "metrics"
+  ];
+
   const copyMarkdown = async () => {
     setIsCopying(true);
     try {
@@ -232,8 +244,8 @@ export const MeetingDetails = ({
         </div>
       </div>
       <Accordion
-        type={"multiple"}
-        defaultValue={["summary", "action-items"]}
+        type="multiple"
+        defaultValue={allAccordionValues}
         className="w-full flex flex-col gap-4"
       >
         <AccordionItem value="summary">
