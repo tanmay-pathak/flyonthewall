@@ -1,5 +1,5 @@
 export const formatAsMarkdown = (data: any): string => {
-  const formatDate = (dateStr: string) => {
+  const formatDate = (dateStr: string | null | undefined) => {
     if (!dateStr || dateStr === "null") return "";
     try {
       return new Date(dateStr).toLocaleDateString('en-US', {
@@ -13,13 +13,30 @@ export const formatAsMarkdown = (data: any): string => {
     }
   };
 
+  const safeArray = <T>(arr: T[] | null | undefined): T[] => {
+    return Array.isArray(arr) ? arr : [];
+  };
+
+  const safeString = (str: string | null | undefined, defaultValue: string = ''): string => {
+    return str || defaultValue;
+  };
+
+  const safeNumber = (num: number | null | undefined, defaultValue: number = 0): number => {
+    return typeof num === 'number' ? num : defaultValue;
+  };
+
   // Ensure required fields exist with defaults
-  const title = data.title || 'Untitled Meeting';
-  const date = data.date || new Date().toISOString();
-  const length = data.length || 'Duration not specified';
-  const attendees = Array.isArray(data.attendees) ? data.attendees : [];
-  const summary = data.summary || 'No summary provided';
-  const meetingNotes = Array.isArray(data.meetingNotes) ? data.meetingNotes : [];
+  const title = safeString(data?.title, 'Untitled Meeting');
+  const date = safeString(data?.date, new Date().toISOString());
+  const length = safeString(data?.length, 'Duration not specified');
+  const attendees = safeArray(data?.attendees);
+  const summary = safeString(data?.summary, 'No summary provided');
+  const meetingNotes = safeArray(data?.meetingNotes);
+  const meetingType = data?.meetingType?.type ? {
+    type: data.meetingType.type,
+    confidence: safeNumber(data.meetingType.confidence, 0),
+    details: safeString(data.meetingType.details, '')
+  } : null;
 
   let markdown = `# ${title}\n\n`;
   
@@ -27,13 +44,14 @@ export const formatAsMarkdown = (data: any): string => {
   markdown += `## 📅 Meeting Details\n\n`;
   markdown += `**Date:** ${formatDate(date)}\n`;
   markdown += `**Duration:** ${length}\n`;
+  markdown += `**Type:** ${meetingType?.type || 'Not specified'}\n`;
   markdown += `**Participants:** ${attendees.length}\n\n`;
 
   // Attendees Section
   if (attendees.length > 0) {
     markdown += `## 👥 Attendees\n\n`;
-    attendees.forEach((attendee: string) => {
-      markdown += `- ${attendee}\n`;
+    attendees.forEach((attendee: unknown) => {
+      markdown += `- ${safeString(attendee as string, 'Unknown Attendee')}\n`;
     });
     markdown += "\n";
   }
@@ -45,67 +63,150 @@ export const formatAsMarkdown = (data: any): string => {
   // Key Highlights Section
   if (meetingNotes.length > 0) {
     markdown += `## 🔑 Key Highlights\n\n`;
-    meetingNotes.forEach((note: string, index: number) => {
-      markdown += `${index + 1}. ${note}\n`;
+    meetingNotes.forEach((note: unknown, index: number) => {
+      markdown += `${index + 1}. ${safeString(note as string, 'Note content missing')}\n`;
     });
     markdown += "\n";
   }
 
+  // Key Decisions Section
+  const decisions = safeArray(data?.keyDecisions);
+  if (decisions.length > 0) {
+    markdown += `## 🎯 Key Decisions\n\n`;
+    decisions.forEach((decision: any, index: number) => {
+      if (!decision) return;
+      markdown += `### Decision ${index + 1}: ${safeString(decision.decision, 'Decision details missing')}\n`;
+      markdown += `**Context:** ${safeString(decision.context, 'No context provided')}\n`;
+      const stakeholders = safeArray(decision.stakeholders);
+      markdown += `**Stakeholders:** ${stakeholders.length > 0 ? stakeholders.join(', ') : 'None specified'}\n\n`;
+    });
+  }
+
   // Action Items Section
-  if (Array.isArray(data.actionItems) && data.actionItems.length > 0) {
+  const actionItems = safeArray(data?.actionItems);
+  if (actionItems.length > 0) {
     markdown += `## ✅ Action Items\n\n`;
     markdown += `| Assignee | Task | Due Date |\n`;
     markdown += `|----------|------|----------|\n`;
-    data.actionItems.forEach((item: any) => {
+    actionItems.forEach((item: any) => {
+      if (!item) return;
       const dueDate = formatDate(item?.dueDate);
-      const assignee = item?.assignee || 'Unassigned';
-      const actionItem = item?.actionItem || 'No task specified';
+      const assignee = safeString(item?.assignee, 'Unassigned');
+      const actionItem = safeString(item?.actionItem, 'No task specified');
       markdown += `| ${assignee} | ${actionItem} | ${dueDate || '-'} |\n`;
     });
     markdown += "\n";
   }
 
   // Potential Action Items Section
-  if (Array.isArray(data.potentialActionItems) && data.potentialActionItems.length > 0) {
+  const potentialItems = safeArray(data?.potentialActionItems);
+  if (potentialItems.length > 0) {
     markdown += `## 📋 Potential Action Items\n\n`;
     markdown += `| Suggested Assignee | Proposed Task | Target Date |\n`;
     markdown += `|-------------------|---------------|-------------|\n`;
-    data.potentialActionItems.forEach((item: any) => {
+    potentialItems.forEach((item: any) => {
+      if (!item) return;
       const targetDate = formatDate(item?.dueDate);
-      const assignee = item?.assignee || 'Unassigned';
-      const actionItem = item?.actionItem || 'No task specified';
+      const assignee = safeString(item?.assignee, 'Unassigned');
+      const actionItem = safeString(item?.actionItem, 'No task specified');
       markdown += `| ${assignee} | ${actionItem} | ${targetDate || '-'} |\n`;
     });
     markdown += "\n";
   }
 
+  // Follow-up Meetings Section
+  const followups = safeArray(data?.followupMeetings);
+  if (followups.length > 0) {
+    markdown += `## 📅 Follow-up Meetings\n\n`;
+    followups.forEach((meeting: any) => {
+      if (!meeting) return;
+      markdown += `### ${safeString(meeting.topic, 'Untitled Meeting')}\n`;
+      markdown += `**Priority:** ${safeString(meeting.priority, 'Not specified').toUpperCase()}\n`;
+      if (meeting.proposedDate) {
+        markdown += `**Proposed Date:** ${formatDate(meeting.proposedDate)}\n`;
+      }
+      const requiredAttendees = safeArray(meeting.requiredAttendees);
+      markdown += `**Required Attendees:** ${requiredAttendees.length > 0 ? requiredAttendees.join(', ') : 'None specified'}\n\n`;
+    });
+  }
+
+  // Open Questions Section
+  const questions = safeArray(data?.unresolvedQuestions);
+  if (questions.length > 0) {
+    markdown += `## ❓ Open Questions\n\n`;
+    questions.forEach((question: any) => {
+      markdown += `${safeString(question, 'Question details missing')}\n`;
+    });
+    markdown += "\n";
+  }
+
+  // Meeting Analytics Section
+  const metrics = data?.metrics;
+  if (metrics) {
+    markdown += `## 📊 Meeting Analytics\n\n`;
+    
+    if (metrics.sentiment) {
+      markdown += `### Sentiment Analysis\n`;
+      markdown += `- Overall Tone: ${safeString(metrics.sentiment.overall, 'Not specified')}\n`;
+      markdown += `- Engagement Level: ${safeNumber(metrics.sentiment.engagement, 0)}/10\n`;
+      markdown += `- Productivity Score: ${safeNumber(metrics.sentiment.productiveness, 0)}/10\n\n`;
+    }
+
+    const timeBreakdown = safeArray(metrics.timeBreakdown);
+    if (timeBreakdown.length > 0) {
+      markdown += `### Time Breakdown\n\n`;
+      markdown += `| Topic | Duration | Percentage |\n`;
+      markdown += `|-------|----------|------------|\n`;
+      timeBreakdown.forEach((item: any) => {
+        if (!item) return;
+        const topic = safeString(item.topic, 'Untitled Topic');
+        const duration = safeString(item.duration, 'Unknown');
+        const percentage = safeNumber(item.percentage, 0);
+        markdown += `| ${topic} | ${duration} | ${percentage}% |\n`;
+      });
+      markdown += "\n";
+    }
+  }
+
   // Retrospective Section
-  if (data.retro && Array.isArray(data.retro.participants) && data.retro.participants.length > 0) {
+  const retro = data?.retro;
+  if (retro && Array.isArray(retro.participants) && retro.participants.length > 0) {
     markdown += `## 🔄 Team Retrospective\n\n`;
-    data.retro.participants.forEach((participant: any) => {
+    retro.participants.forEach((participant: any) => {
       if (!participant) return;
       
-      const name = participant.name || 'Anonymous Participant';
+      const name = safeString(participant.name, 'Anonymous Participant');
       markdown += `### ${name}\n\n`;
       
-      if (Array.isArray(participant.items) && participant.items.length > 0) {
+      const items = safeArray(participant.items);
+      if (items.length > 0) {
+        // Group items by category with emojis
+        const categoryEmojis: { [key: string]: string } = {
+          loves: '💚',
+          longedFor: '💭',
+          loathed: '💔',
+          learned: '💡'
+        };
+
         // Group items by category
-        const categorizedItems = participant.items.reduce((acc: any, item: any) => {
+        const categorizedItems = items.reduce((acc: any, item: any) => {
           if (!item) return acc;
-          const category = item.category || 'uncategorized';
+          const category = safeString(item.category, 'uncategorized');
           if (!acc[category]) {
             acc[category] = [];
           }
-          if (item.description) {
-            acc[category].push(item.description);
+          const description = safeString(item.description);
+          if (description) {
+            acc[category].push(description);
           }
           return acc;
         }, {});
-
         // Output items by category
-        Object.entries(categorizedItems).forEach(([category, items]: [string, any]) => {
-          if (items.length > 0) {
-            markdown += `#### ${category.charAt(0).toUpperCase() + category.slice(1)}\n`;
+        Object.entries(categorizedItems as Record<string, unknown>).forEach(([category, items]) => {
+          if (Array.isArray(items) && items.length > 0) {
+            const emoji = categoryEmojis[category] || '•';
+            const formattedCategory = category.charAt(0).toUpperCase() + category.slice(1);
+            markdown += `#### ${emoji} ${formattedCategory}\n`;
             items.forEach((description: string) => {
               markdown += `- ${description}\n`;
             });
@@ -116,9 +217,10 @@ export const formatAsMarkdown = (data: any): string => {
     });
   }
 
-  // Footer
+  // Footer with metadata
   markdown += `---\n`;
-  markdown += `Generated on ${new Date().toLocaleString('en-US', { 
+  markdown += `**Meeting Type:** ${meetingType?.type || 'Not specified'}\n`;
+  markdown += `**Generated:** ${new Date().toLocaleString('en-US', { 
     weekday: 'long',
     year: 'numeric',
     month: 'long',
