@@ -14,9 +14,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { formatKeyHighlightsData, formatSummaryData } from "@/lib/formatters";
+import { formatAsMarkdown } from "@/lib/formatters";
 import { handleShareURL } from "@/lib/utils";
-import { ArrowLeft, Copy, Share2 } from "lucide-react";
+import { ArrowLeft, Copy, Share2, Download } from "lucide-react";
 import React from "react";
 import { z } from "zod";
 import { meetingSchema } from "../server-actions/schema";
@@ -28,14 +28,14 @@ export const MeetingDetails = ({
 }) => {
   const { toast } = useToast();
 
-  const copySummary = (data: any) => {
-    const humanReadableData = formatSummaryData(data);
+  const copyMarkdown = () => {
+    const markdown = formatAsMarkdown(data);
     navigator.clipboard
-      .writeText(humanReadableData)
+      .writeText(markdown)
       .then(() => {
         toast({
           title: "Success",
-          description: "Summary copied to clipboard",
+          description: "Meeting notes copied to clipboard as markdown",
         });
       })
       .catch((err) => {
@@ -48,24 +48,21 @@ export const MeetingDetails = ({
       });
   };
 
-  const copyKeyHighlights = () => {
-    const humanReadableData = formatKeyHighlightsData(data);
-    navigator.clipboard
-      .writeText(humanReadableData)
-      .then(() => {
-        toast({
-          title: "Success",
-          description: "Key Highlights copied to clipboard",
-        });
-      })
-      .catch((err) => {
-        console.error("Failed to copy to clipboard", err);
-        toast({
-          title: "Error",
-          description: "Failed to copy to clipboard",
-          variant: "destructive",
-        });
-      });
+  const exportMarkdown = () => {
+    const markdown = formatAsMarkdown(data);
+    const blob = new Blob([markdown], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${data.title.replace(/[^a-z0-9]/gi, "_").toLowerCase()}_meeting_notes.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({
+      title: "Success",
+      description: "Meeting notes exported as markdown",
+    });
   };
 
   return (
@@ -82,10 +79,20 @@ export const MeetingDetails = ({
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back
         </Button>
-        <Button variant="ghost" onClick={() => handleShareURL(data)}>
-          Share
-          <Share2 className="h-4 w-4 mr-2" />
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="ghost" onClick={copyMarkdown}>
+            Copy
+            <Copy className="h-4 w-4 ml-2" />
+          </Button>
+          <Button variant="ghost" onClick={exportMarkdown}>
+            Export
+            <Download className="h-4 w-4 ml-2" />
+          </Button>
+          <Button variant="ghost" onClick={() => handleShareURL(data)}>
+            Share
+            <Share2 className="h-4 w-4 ml-2" />
+          </Button>
+        </div>
       </div>
       <Accordion
         type={"multiple"}
@@ -131,11 +138,6 @@ export const MeetingDetails = ({
               </CardContent>
               <CardFooter className="flex justify-between">
                 <p className="text-sm text-gray-500">Summary Details</p>
-                <div className="flex gap-2">
-                  <Button variant="ghost" onClick={() => copySummary(data)}>
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
               </CardFooter>
             </AccordionContent>
           </Card>
@@ -164,9 +166,6 @@ export const MeetingDetails = ({
                 <p className="text-sm text-gray-500">
                   Total Points: {data.meetingNotes.length}
                 </p>
-                <Button variant="ghost" onClick={copyKeyHighlights}>
-                  <Copy className="h-4 w-4" />
-                </Button>
               </CardFooter>
             </AccordionContent>
           </Card>
@@ -221,29 +220,6 @@ export const MeetingDetails = ({
                   <p className="text-sm text-gray-500">
                     Total Confirmed Tasks: {data.actionItems.length}
                   </p>
-                  <Button
-                    variant="ghost"
-                    onClick={() =>
-                      navigator.clipboard
-                        .writeText(JSON.stringify(data.actionItems, null, 2))
-                        .then(() => {
-                          toast({
-                            title: "Success",
-                            description: "Action items copied to clipboard",
-                          });
-                        })
-                        .catch((err) => {
-                          console.error("Failed to copy to clipboard", err);
-                          toast({
-                            title: "Error",
-                            description: "Failed to copy to clipboard",
-                            variant: "destructive",
-                          });
-                        })
-                    }
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
                 </CardFooter>
               </AccordionContent>
             </Card>
@@ -299,32 +275,6 @@ export const MeetingDetails = ({
                   <p className="text-sm text-gray-500">
                     Total Proposed Tasks: {data.potentialActionItems.length}
                   </p>
-                  <Button
-                    variant="ghost"
-                    onClick={() => {
-                      navigator.clipboard
-                        .writeText(
-                          JSON.stringify(data.potentialActionItems, null, 2)
-                        )
-                        .then(() => {
-                          toast({
-                            title: "Success",
-                            description:
-                              "Potential action items copied to clipboard",
-                          });
-                        })
-                        .catch((err) => {
-                          console.error("Failed to copy to clipboard", err);
-                          toast({
-                            title: "Error",
-                            description: "Failed to copy to clipboard",
-                            variant: "destructive",
-                          });
-                        });
-                    }}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
                 </CardFooter>
               </AccordionContent>
             </Card>
@@ -382,7 +332,7 @@ export const MeetingDetails = ({
                               </tr>
                             ))}
                           </React.Fragment>
-                        )
+                        ),
                       )}
                     </tbody>
                   </table>
@@ -391,29 +341,6 @@ export const MeetingDetails = ({
                   <p className="text-sm text-gray-500">
                     Total Participants: {data.retro?.participants.length}
                   </p>
-                  <Button
-                    variant="ghost"
-                    onClick={() => {
-                      navigator.clipboard
-                        .writeText(JSON.stringify(data.retro, null, 2))
-                        .then(() => {
-                          toast({
-                            title: "Success",
-                            description: "Retro data copied to clipboard",
-                          });
-                        })
-                        .catch((err) => {
-                          console.error("Failed to copy to clipboard", err);
-                          toast({
-                            title: "Error",
-                            description: "Failed to copy to clipboard",
-                            variant: "destructive",
-                          });
-                        });
-                    }}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
                 </CardFooter>
               </AccordionContent>
             </Card>
