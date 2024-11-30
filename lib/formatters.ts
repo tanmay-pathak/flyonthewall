@@ -50,8 +50,8 @@ export const formatAsMarkdown = (data: any): string => {
   // Attendees Section
   if (attendees.length > 0) {
     markdown += `## 👥 Attendees\n\n`;
-    attendees.forEach((attendee: string) => {
-      markdown += `- ${safeString(attendee, 'Unknown Attendee')}\n`;
+    attendees.forEach((attendee: unknown) => {
+      markdown += `- ${safeString(attendee as string, 'Unknown Attendee')}\n`;
     });
     markdown += "\n";
   }
@@ -134,8 +134,8 @@ export const formatAsMarkdown = (data: any): string => {
   const questions = safeArray(data?.unresolvedQuestions);
   if (questions.length > 0) {
     markdown += `## ❓ Open Questions\n\n`;
-    questions.forEach((question: string, index: number) => {
-      markdown += `${index + 1}. ${safeString(question, 'Question details missing')}\n`;
+    questions.forEach((question: any) => {
+      markdown += `${safeString(question, 'Question details missing')}\n`;
     });
     markdown += "\n";
   }
@@ -201,9 +201,8 @@ export const formatAsMarkdown = (data: any): string => {
           }
           return acc;
         }, {});
-
         // Output items by category
-        Object.entries(categorizedItems).forEach(([category, items]: [string, any]) => {
+        Object.entries(categorizedItems as Record<string, unknown>).forEach(([category, items]) => {
           if (Array.isArray(items) && items.length > 0) {
             const emoji = categoryEmojis[category] || '•';
             const formattedCategory = category.charAt(0).toUpperCase() + category.slice(1);
