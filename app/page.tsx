@@ -77,6 +77,29 @@ export default function Home() {
     }
   };
 
+  const handleTextSubmit = async (text: string) => {
+    setStatus("parsing");
+    const result = await parseMeetingNotes(text);
+    if (result) {
+      setStatus("created");
+      setParsedResult(result as z.infer<typeof meetingSchema>);
+
+      plausible("newMeeting", {
+        props: {
+          type: "pasted",
+        },
+      });
+
+      // Save to localStorage
+      const newMeetings = [
+        ...previousMeetings,
+        result as z.infer<typeof meetingSchema>,
+      ];
+      localStorage.setItem("meetings", JSON.stringify(newMeetings));
+      setPreviousMeetings(newMeetings);
+    }
+  };
+
   const handleMeetingSelect = (meeting: z.infer<typeof meetingSchema>) => {
     setStatus("created");
     setParsedResult(meeting);
@@ -89,7 +112,10 @@ export default function Home() {
         {status === "initial" && (
           <>
             <div className="flex-1 p-4">
-              <Upload handleFileChange={handleFileChange} />
+              <Upload 
+                handleFileChange={handleFileChange}
+                handleTextSubmit={handleTextSubmit}
+              />
             </div>
             <PreviousMeetingsList
               meetings={previousMeetings}
