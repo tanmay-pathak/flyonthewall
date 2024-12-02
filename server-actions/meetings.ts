@@ -1,5 +1,7 @@
 "use server";
 
+export const maxDuration = 60;
+
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { z } from "zod";
