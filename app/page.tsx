@@ -12,6 +12,8 @@ import Upload from "../components/Upload";
 import { parseMeetingNotes } from "../server-actions/meetings";
 import { meetingSchema } from "../server-actions/schema";
 
+export const maxDuration = 60;
+
 export default function Home() {
   const [status, setStatus] = useState<
     "initial" | "uploading" | "parsing" | "created"
@@ -112,7 +114,7 @@ export default function Home() {
         {status === "initial" && (
           <>
             <div className="flex-1 p-4">
-              <Upload 
+              <Upload
                 handleFileChange={handleFileChange}
                 handleTextSubmit={handleTextSubmit}
               />
@@ -134,13 +136,13 @@ export default function Home() {
         {parsedResult && (
           <div className="flex-1">
             <ScrollArea className="h-full w-full rounded-md p-4 gap-2">
-              <MeetingDetails 
-                data={parsedResult} 
+              <MeetingDetails
+                data={parsedResult}
                 onDataChange={(newData) => {
                   setParsedResult(newData);
-                  
+
                   // Update in previousMeetings as well
-                  const newMeetings = previousMeetings.map(meeting => 
+                  const newMeetings = previousMeetings.map((meeting) =>
                     meeting.title === newData.title ? newData : meeting
                   );
                   localStorage.setItem("meetings", JSON.stringify(newMeetings));
