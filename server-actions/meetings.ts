@@ -4,7 +4,12 @@ import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { z } from "zod";
 import { sampleOutput } from "./sample";
-import { decisionSchema, followupMeetingSchema, meetingMetricsSchema, meetingSchema } from "./schema";
+import {
+  decisionSchema,
+  followupMeetingSchema,
+  meetingMetricsSchema,
+  meetingSchema,
+} from "./schema";
 
 async function detectMeetingType(text: string) {
   const typePrompt = `Analyze the conversation and determine its type. Focus on clear indicators and DO NOT make assumptions.
@@ -20,13 +25,13 @@ Return type "other" if unclear.`;
     const { object } = await generateObject({
       messages: [
         { role: "system", content: typePrompt },
-        { role: "user", content: text }
+        { role: "user", content: text },
       ],
       model: openai("gpt-4o-mini"),
       schema: z.object({
-        meetingType: meetingSchema.shape.meetingType
+        meetingType: meetingSchema.shape.meetingType,
       }),
-      temperature: 0.1
+      temperature: 0.1,
     });
 
     return object;
@@ -36,8 +41,8 @@ Return type "other" if unclear.`;
       meetingType: {
         type: "other" as const,
         confidence: 0.1,
-        details: "Unable to determine meeting type"
-      }
+        details: "Unable to determine meeting type",
+      },
     };
   }
 }
@@ -60,7 +65,7 @@ IMPORTANT:
     const { object } = await generateObject({
       messages: [
         { role: "system", content: basicInfoPrompt },
-        { role: "user", content: text }
+        { role: "user", content: text },
       ],
       model: openai("gpt-4o-mini"),
       schema: z.object({
@@ -68,24 +73,23 @@ IMPORTANT:
         title: z.string(),
         attendees: z.array(z.string()).min(1),
         date: z.string(),
-        length: z.string().optional()
+        length: z.string().optional(),
       }),
-      temperature: 0.3
+      temperature: 0.3,
     });
 
     return object;
   } catch (error) {
     console.error("Error extracting basic info:", error);
-    const fallbackTitle = meetingType?.type === "casual" 
-      ? "Team Discussion" 
-      : "Team Meeting";
-    
+    const fallbackTitle =
+      meetingType?.type === "casual" ? "Team Discussion" : "Team Meeting";
+
     return {
       title: fallbackTitle,
       summary: "Meeting discussion",
       attendees: ["Unknown"],
       date: new Date().toLocaleDateString(),
-      length: undefined
+      length: undefined,
     };
   }
 }
@@ -121,45 +125,55 @@ IMPORTANT:
     const { object } = await generateObject({
       messages: [
         { role: "system", content: actionItemPrompt },
-        { role: "user", content: text }
+        { role: "user", content: text },
       ],
       model: openai("gpt-4o-mini"),
       schema: z.object({
-        actionItems: z.array(z.object({
-          assignee: z.string(),
-          dueDate: z.string().nullable(),
-          actionItem: z.string()
-        })).default([]),
-        potentialActionItems: z.array(z.object({
-          assignee: z.string(),
-          dueDate: z.string().nullable(),
-          actionItem: z.string()
-        })).default([])
+        actionItems: z
+          .array(
+            z.object({
+              assignee: z.string(),
+              dueDate: z.string().nullable(),
+              actionItem: z.string(),
+            })
+          )
+          .default([]),
+        potentialActionItems: z
+          .array(
+            z.object({
+              assignee: z.string(),
+              dueDate: z.string().nullable(),
+              actionItem: z.string(),
+            })
+          )
+          .default([]),
       }),
-      temperature: 0.7
+      temperature: 0.7,
     });
 
-    const processedActionItems = object.actionItems.filter(item => 
-      item.assignee && 
-      item.assignee !== "Team" && 
-      !item.actionItem.toLowerCase().includes("maybe") &&
-      !item.actionItem.toLowerCase().includes("might") &&
-      !item.actionItem.toLowerCase().includes("could")
+    const processedActionItems = object.actionItems.filter(
+      (item) =>
+        item.assignee &&
+        item.assignee !== "Team" &&
+        !item.actionItem.toLowerCase().includes("maybe") &&
+        !item.actionItem.toLowerCase().includes("might") &&
+        !item.actionItem.toLowerCase().includes("could")
     );
 
     const potentialItems = [
       ...object.potentialActionItems,
-      ...object.actionItems.filter(item => 
-        !item.assignee || 
-        item.assignee === "Team" ||
-        item.actionItem.toLowerCase().includes("maybe") ||
-        item.actionItem.toLowerCase().includes("might") ||
-        item.actionItem.toLowerCase().includes("could")
-      )
+      ...object.actionItems.filter(
+        (item) =>
+          !item.assignee ||
+          item.assignee === "Team" ||
+          item.actionItem.toLowerCase().includes("maybe") ||
+          item.actionItem.toLowerCase().includes("might") ||
+          item.actionItem.toLowerCase().includes("could")
+      ),
     ];
 
     const uniquePotentialItems = potentialItems.reduce((acc: any[], item) => {
-      if (!acc.some(x => x.actionItem === item.actionItem)) {
+      if (!acc.some((x) => x.actionItem === item.actionItem)) {
         acc.push(item);
       }
       return acc;
@@ -167,13 +181,13 @@ IMPORTANT:
 
     return {
       actionItems: processedActionItems,
-      potentialActionItems: uniquePotentialItems
+      potentialActionItems: uniquePotentialItems,
     };
   } catch (error) {
     console.warn("Error extracting action items:", error);
     return {
       actionItems: [],
-      potentialActionItems: []
+      potentialActionItems: [],
     };
   }
 }
@@ -196,11 +210,11 @@ IMPORTANT:
     const { object } = await generateObject({
       messages: [
         { role: "system", content: metricsPrompt },
-        { role: "user", content: text }
+        { role: "user", content: text },
       ],
       model: openai("gpt-4o-mini"),
       schema: meetingMetricsSchema,
-      temperature: 0.3
+      temperature: 0.3,
     });
 
     return object;
@@ -210,19 +224,24 @@ IMPORTANT:
       sentiment: {
         overall: "neutral",
         engagement: 5,
-        productiveness: 5
+        productiveness: 5,
       },
-      timeBreakdown: [{
-        topic: "General Discussion",
-        duration: "entire meeting",
-        percentage: 100
-      }]
+      timeBreakdown: [
+        {
+          topic: "General Discussion",
+          duration: "entire meeting",
+          percentage: 100,
+        },
+      ],
     };
   }
 }
 
 async function extractDetailedInfo(text: string, meetingType: any) {
-  if (!meetingType || (meetingType.type === "casual" && meetingType.confidence > 0.9)) {
+  if (
+    !meetingType ||
+    (meetingType.type === "casual" && meetingType.confidence > 0.9)
+  ) {
     return {
       meetingNotes: [],
       actionItems: [],
@@ -230,7 +249,6 @@ async function extractDetailedInfo(text: string, meetingType: any) {
       keyDecisions: [],
       followupMeetings: [],
       unresolvedQuestions: [],
-      metrics: await generateMeetingMetrics(text)
     };
   }
 
@@ -248,26 +266,25 @@ IMPORTANT:
     const { object } = await generateObject({
       messages: [
         { role: "system", content: detailPrompt },
-        { role: "user", content: text }
+        { role: "user", content: text },
       ],
       model: openai("gpt-4o-mini"),
-      schema: z.object({
-        meetingNotes: z.array(z.string()).default([]),
-        keyDecisions: z.array(decisionSchema).default([]),
-        followupMeetings: z.array(followupMeetingSchema).default([]),
-        unresolvedQuestions: z.array(z.string()).default([])
-      }).partial(),
-      temperature: 0.7
+      schema: z
+        .object({
+          meetingNotes: z.array(z.string()).default([]),
+          keyDecisions: z.array(decisionSchema).default([]),
+          followupMeetings: z.array(followupMeetingSchema).default([]),
+          unresolvedQuestions: z.array(z.string()).default([]),
+        })
+        .partial(),
+      temperature: 0.7,
     });
-
-    const metrics = await generateMeetingMetrics(text);
 
     return {
       meetingNotes: object.meetingNotes || [],
       keyDecisions: object.keyDecisions || [],
       followupMeetings: object.followupMeetings || [],
       unresolvedQuestions: object.unresolvedQuestions || [],
-      metrics
     };
   } catch (error) {
     console.warn("Error extracting detailed info:", error);
@@ -276,13 +293,16 @@ IMPORTANT:
       keyDecisions: [],
       followupMeetings: [],
       unresolvedQuestions: [],
-      metrics: await generateMeetingMetrics(text)
     };
   }
 }
 
 async function extractRetroInfo(text: string, meetingType: any) {
-  if (!meetingType || meetingType.type !== "retro" || meetingType.confidence < 0.7) {
+  if (
+    !meetingType ||
+    meetingType.type !== "retro" ||
+    meetingType.confidence < 0.7
+  ) {
     return { retro: null };
   }
 
@@ -292,13 +312,13 @@ async function extractRetroInfo(text: string, meetingType: any) {
     const { object } = await generateObject({
       messages: [
         { role: "system", content: retroPrompt },
-        { role: "user", content: text }
+        { role: "user", content: text },
       ],
       model: openai("gpt-4o-mini"),
       schema: z.object({
-        retro: meetingSchema.shape.retro
+        retro: meetingSchema.shape.retro,
       }),
-      temperature: 0.5
+      temperature: 0.5,
     });
 
     return object;
@@ -320,28 +340,26 @@ export async function parseMeetingNotes(text: string) {
   try {
     const { meetingType } = await detectMeetingType(text);
 
-    const [basicInfo, actionItemsInfo, detailedInfo, retroInfo, metrics] = await Promise.all([
-      extractBasicInfo(text, meetingType),
-      extractActionItems(text, meetingType),
-      extractDetailedInfo(text, meetingType),
-      extractRetroInfo(text, meetingType),
-      generateMeetingMetrics(text)
-    ]);
+    const [basicInfo, actionItemsInfo, detailedInfo, retroInfo, metrics] =
+      await Promise.all([
+        extractBasicInfo(text, meetingType),
+        extractActionItems(text, meetingType),
+        extractDetailedInfo(text, meetingType),
+        extractRetroInfo(text, meetingType),
+        generateMeetingMetrics(text),
+      ]);
 
     return {
       meetingType,
       ...basicInfo,
-      meetingNotes: detailedInfo.meetingNotes || [],
+      ...detailedInfo,
       actionItems: actionItemsInfo.actionItems,
       potentialActionItems: actionItemsInfo.potentialActionItems,
-      keyDecisions: detailedInfo.keyDecisions || [],
-      followupMeetings: detailedInfo.followupMeetings || [],
-      unresolvedQuestions: detailedInfo.unresolvedQuestions || [],
       metrics,
-      ...(retroInfo.retro ? { retro: retroInfo.retro } : { retro: null })
+      ...(retroInfo.retro ? { retro: retroInfo.retro } : {}),
     };
   } catch (error) {
     console.error("Error processing meeting notes:", error);
-    throw new Error("Failed to process meeting notes");
+    throw error;
   }
 }
