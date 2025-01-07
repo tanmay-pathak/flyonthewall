@@ -4,7 +4,7 @@ import Flies from "@/components/Flies";
 import Hero from "@/components/Hero";
 import { PreviousMeetingsList } from "@/components/PreviousMeetings";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { usePlausible } from "next-plausible";
+import { useUmami } from "next-umami";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { MeetingDetails } from "../components/MeetingDetails";
@@ -23,7 +23,7 @@ export default function Home() {
   const [previousMeetings, setPreviousMeetings] = useState<
     z.infer<typeof meetingSchema>[]
   >([]);
-  const plausible = usePlausible();
+  const umami = useUmami();
 
   useEffect(() => {
     // Load previous meetings from localStorage on component mount
@@ -63,10 +63,8 @@ export default function Home() {
       setStatus("created");
       setParsedResult(result as z.infer<typeof meetingSchema>);
 
-      plausible("newMeeting", {
-        props: {
-          fileName: file.name,
-        },
+      umami.event("newMeeting", {
+        fileName: file.name,
       });
 
       // Save to localStorage
@@ -86,10 +84,8 @@ export default function Home() {
       setStatus("created");
       setParsedResult(result as z.infer<typeof meetingSchema>);
 
-      plausible("newMeeting", {
-        props: {
-          type: "pasted",
-        },
+      umami.event("newMeeting", {
+        type: "pasted",
       });
 
       // Save to localStorage

@@ -2,7 +2,7 @@ import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
-import PlausibleProvider from "next-plausible";
+import UmamiProvider from "next-umami";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -46,10 +46,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <PlausibleProvider
-          domain="flyonthewall.vercel.app"
-          customDomain="https://plausible.zu.ca"
-          selfHosted={true}
+        <UmamiProvider
+          websiteId="2265700d-b500-4d04-a41b-c3e41677e72e"
+          src="https://umami.zu.ca/script.js"
         />
       </head>
       <body
