@@ -2,7 +2,6 @@ import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
-import UmamiProvider from "next-umami";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -46,10 +45,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <UmamiProvider
-          websiteId="2265700d-b500-4d04-a41b-c3e41677e72e"
+        <script
+          async
+          defer
           src="https://umami.zu.ca/script.js"
-        />
+          data-website-id="2265700d-b500-4d04-a41b-c3e41677e72e"
+        ></script>
       </head>
       <body
         className={`${inter.className} flex flex-col min-h-screen bg-white text-gray-800`}

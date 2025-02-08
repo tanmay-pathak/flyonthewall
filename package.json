@@ -23,7 +23,6 @@
     "lodash": "^4.17.21",
     "lucide-react": "^0.460.0",
     "next": "15.0.3",
-    "next-umami": "^0.0.4",
     "react": "^18",
     "react-dom": "^18",
     "react-dropzone": "^14.3.5",
