@@ -1,6 +1,6 @@
 "use server";
 
-import { openai } from "@ai-sdk/openai";
+import { google } from "@ai-sdk/google";
 import { generateObject } from "ai";
 import { z } from "zod";
 import { sampleOutput } from "./sample";
@@ -56,7 +56,7 @@ async function detectMeetingType(
         { role: "system", content: PROMPTS.TYPE_DETECTION },
         { role: "user", content: text },
       ],
-      model: openai("gpt-4o-mini"),
+      model: google("gemini-2.0-flash-exp"),
       schema: z.object({
         meetingType: meetingSchema.shape.meetingType,
       }),
@@ -83,7 +83,7 @@ async function extractBasicInfo(text: string, meetingType: MeetingTypeResult) {
         { role: "system", content: PROMPTS.BASIC_INFO },
         { role: "user", content: text },
       ],
-      model: openai("gpt-4o-mini"),
+      model: google("gemini-2.0-flash-exp"),
       schema: z.object({
         summary: z.string(),
         title: z.string(),
@@ -111,7 +111,7 @@ async function extractActionItems(
         { role: "system", content: PROMPTS.ACTION_ITEMS },
         { role: "user", content: text },
       ],
-      model: openai("gpt-4o-mini"),
+      model: google("gemini-2.0-flash-exp"),
       schema: z.object({
         actionItems: z
           .array(
@@ -180,7 +180,7 @@ async function generateMeetingMetrics(text: string) {
         { role: "system", content: PROMPTS.METRICS },
         { role: "user", content: text },
       ],
-      model: openai("gpt-4o-mini"),
+      model: google("gemini-2.0-flash-exp"),
       schema: meetingMetricsSchema,
       temperature: TEMPERATURES.METRICS,
     });
@@ -209,7 +209,7 @@ async function extractDetailedInfo(
         { role: "system", content: PROMPTS.DETAILED_INFO },
         { role: "user", content: text },
       ],
-      model: openai("gpt-4o-mini"),
+      model: google("gemini-2.0-flash-exp"),
       schema: z
         .object({
           meetingNotes: z.array(z.string()).default([]),
@@ -248,7 +248,7 @@ async function extractRetroInfo(text: string, meetingType: MeetingTypeResult) {
         { role: "system", content: PROMPTS.RETRO },
         { role: "user", content: text },
       ],
-      model: openai("gpt-4o-mini"),
+      model: google("gemini-2.0-flash-exp"),
       schema: z.object({
         retro: meetingSchema.shape.retro,
       }),
