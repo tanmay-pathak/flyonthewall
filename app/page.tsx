@@ -61,10 +61,6 @@ export default function Home() {
       setStatus("created");
       setParsedResult(result as z.infer<typeof meetingSchema>);
 
-      umami.event("newMeeting", {
-        fileName: file.name,
-      });
-
       // Save to localStorage
       const newMeetings = [
         ...previousMeetings,
@@ -81,10 +77,6 @@ export default function Home() {
     if (result) {
       setStatus("created");
       setParsedResult(result as z.infer<typeof meetingSchema>);
-
-      umami.event("newMeeting", {
-        type: "pasted",
-      });
 
       // Save to localStorage
       const newMeetings = [
