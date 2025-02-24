@@ -1,4 +1,3 @@
-import { trackEvent } from "@/app/page";
 import {
   Accordion,
   AccordionContent,
@@ -15,7 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { formatAsMarkdown } from "@/lib/formatters";
-import { handleShareURL } from "@/lib/utils";
+import { handleShareURL, trackEvent } from "@/lib/utils";
 import cloneDeep from "lodash/cloneDeep";
 import { ArrowLeft, Copy, Download, Loader2, Share2 } from "lucide-react";
 import React from "react";

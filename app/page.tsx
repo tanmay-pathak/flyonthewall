@@ -10,14 +10,9 @@ import { MeetingDetails } from "../components/MeetingDetails";
 import Upload from "../components/Upload";
 import { parseMeetingNotes } from "../server-actions/meetings";
 import { meetingSchema } from "../server-actions/schema";
+import { trackEvent } from "@/lib/utils";
 
 export const maxDuration = 60;
-
-export const trackEvent = (eventName: string, eventData?: Record<string, any>) => {
-  if (typeof window !== "undefined" && (window as any).umami) {
-    (window as any).umami.track(eventName, eventData);
-  }
-};
 
 export default function Home() {
   const [status, setStatus] = useState<

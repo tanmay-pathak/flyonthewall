@@ -14,9 +14,7 @@ export const handleShareURL = (data: z.infer<typeof meetingSchema>) => {
   navigator.clipboard
     .writeText(shareUrl)
     .then(() => {
-      if (typeof window !== "undefined" && (window as any).umami) {
-        (window as any).umami.track("share_meeting", { title: data.title });
-      }
+      trackEvent("share_meeting", { title: data.title });
       toast({
         title: "Link copied",
         description: "Meeting link has been copied to clipboard",
@@ -29,4 +27,10 @@ export const handleShareURL = (data: z.infer<typeof meetingSchema>) => {
         variant: "destructive",
       });
     });
+};
+
+export const trackEvent = (eventName: string, eventData?: Record<string, any>) => {
+  if (typeof window !== "undefined" && (window as any).umami) {
+    (window as any).umami.track(eventName, eventData);
+  }
 };
