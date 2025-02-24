@@ -13,6 +13,12 @@ import { meetingSchema } from "../server-actions/schema";
 
 export const maxDuration = 60;
 
+export const trackEvent = (eventName: string, eventData?: Record<string, any>) => {
+  if (typeof window !== "undefined" && (window as any).umami) {
+    (window as any).umami.track(eventName, eventData);
+  }
+};
+
 export default function Home() {
   const [status, setStatus] = useState<
     "initial" | "uploading" | "parsing" | "created"
@@ -53,6 +59,7 @@ export default function Home() {
 
   const handleFileChange = async (file: File) => {
     setStatus("uploading");
+    trackEvent("file_upload", { fileName: file.name });
     const text = await file.text();
     setStatus("parsing");
 
@@ -60,6 +67,7 @@ export default function Home() {
     if (result) {
       setStatus("created");
       setParsedResult(result as z.infer<typeof meetingSchema>);
+      trackEvent("meeting_parsed", { title: result.title });
 
       // Save to localStorage
       const newMeetings = [
@@ -73,10 +81,12 @@ export default function Home() {
 
   const handleTextSubmit = async (text: string) => {
     setStatus("parsing");
+    trackEvent("text_submit", { length: text.length });
     const result = await parseMeetingNotes(text);
     if (result) {
       setStatus("created");
       setParsedResult(result as z.infer<typeof meetingSchema>);
+      trackEvent("meeting_parsed", { title: result.title });
 
       // Save to localStorage
       const newMeetings = [
@@ -91,6 +101,7 @@ export default function Home() {
   const handleMeetingSelect = (meeting: z.infer<typeof meetingSchema>) => {
     setStatus("created");
     setParsedResult(meeting);
+    trackEvent("meeting_selected", { title: meeting.title });
   };
 
   return (
@@ -109,6 +120,8 @@ export default function Home() {
               meetings={previousMeetings}
               onMeetingSelect={handleMeetingSelect}
               onMeetingDelete={(index) => {
+                const deletedMeeting = previousMeetings[index];
+                trackEvent("meeting_deleted", { title: deletedMeeting.title });
                 const newMeetings = previousMeetings.filter(
                   (_, i) => i !== index
                 );

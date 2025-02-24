@@ -1,3 +1,4 @@
+import { trackEvent } from "@/app/page";
 import {
   Accordion,
   AccordionContent,
@@ -5,12 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Tooltip,
   TooltipContent,
@@ -48,7 +44,7 @@ export const MeetingDetails = ({
     "potential-action-items",
     "unresolved",
     "retro-section",
-    "metrics"
+    "metrics",
   ];
 
   const copyMarkdown = async () => {
@@ -56,6 +52,7 @@ export const MeetingDetails = ({
     try {
       const markdown = formatAsMarkdown(data);
       await navigator.clipboard.writeText(markdown);
+      trackEvent("copy_markdown", { title: data.title });
       toast({
         title: "Copied!",
         description: "Meeting notes copied to clipboard as markdown",
@@ -80,11 +77,14 @@ export const MeetingDetails = ({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${data.title?.replace(/[^a-z0-9]/gi, "_").toLowerCase() || "meeting"}_notes.md`;
+      a.download = `${
+        data.title?.replace(/[^a-z0-9]/gi, "_").toLowerCase() || "meeting"
+      }_notes.md`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      trackEvent("export_markdown", { title: data.title });
       toast({
         title: "Success",
         description: "Meeting notes exported as markdown",
@@ -94,9 +94,12 @@ export const MeetingDetails = ({
     }
   };
 
-  const handleAssigneeChange = (actionItemIndex: number, newAssignee: string) => {
+  const handleAssigneeChange = (
+    actionItemIndex: number,
+    newAssignee: string
+  ) => {
     if (!onDataChange) return;
-    
+
     const newData = cloneDeep(data);
     if (newData.actionItems) {
       newData.actionItems[actionItemIndex].assignee = newAssignee;
@@ -104,9 +107,12 @@ export const MeetingDetails = ({
     }
   };
 
-  const handlePotentialAssigneeChange = (actionItemIndex: number, newAssignee: string) => {
+  const handlePotentialAssigneeChange = (
+    actionItemIndex: number,
+    newAssignee: string
+  ) => {
     if (!onDataChange) return;
-    
+
     const newData = cloneDeep(data);
     if (newData.potentialActionItems) {
       newData.potentialActionItems[actionItemIndex].assignee = newAssignee;
@@ -114,9 +120,12 @@ export const MeetingDetails = ({
     }
   };
 
-  const handleRetroParticipantChange = (participantIndex: number, newName: string) => {
+  const handleRetroParticipantChange = (
+    participantIndex: number,
+    newName: string
+  ) => {
     if (!onDataChange) return;
-    
+
     const newData = cloneDeep(data);
     if (newData.retro?.participants) {
       newData.retro.participants[participantIndex].name = newName;
@@ -126,30 +135,48 @@ export const MeetingDetails = ({
 
   const renderMetrics = () => {
     if (!data.metrics) return null;
-    
+
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className={`p-4 rounded-lg transition-colors duration-200 ${
-            data.metrics.sentiment.overall === 'positive' ? 'bg-green-50 hover:bg-green-100' :
-            data.metrics.sentiment.overall === 'negative' ? 'bg-red-50 hover:bg-red-100' :
-            'bg-gray-50 hover:bg-gray-100'
-          }`}>
-            <span className="text-sm font-medium text-gray-500 block">Overall Sentiment</span>
-            <span className="text-lg capitalize">{data.metrics.sentiment.overall}</span>
+          <div
+            className={`p-4 rounded-lg transition-colors duration-200 ${
+              data.metrics.sentiment.overall === "positive"
+                ? "bg-green-50 hover:bg-green-100"
+                : data.metrics.sentiment.overall === "negative"
+                ? "bg-red-50 hover:bg-red-100"
+                : "bg-gray-50 hover:bg-gray-100"
+            }`}
+          >
+            <span className="text-sm font-medium text-gray-500 block">
+              Overall Sentiment
+            </span>
+            <span className="text-lg capitalize">
+              {data.metrics.sentiment.overall}
+            </span>
           </div>
           <div className="p-4 rounded-lg bg-gray-50">
-            <span className="text-sm font-medium text-gray-500 block">Engagement</span>
-            <span className="text-lg">{data.metrics.sentiment.engagement}/10</span>
+            <span className="text-sm font-medium text-gray-500 block">
+              Engagement
+            </span>
+            <span className="text-lg">
+              {data.metrics.sentiment.engagement}/10
+            </span>
           </div>
           <div className="p-4 rounded-lg bg-gray-50">
-            <span className="text-sm font-medium text-gray-500 block">Productivity</span>
-            <span className="text-lg">{data.metrics.sentiment.productiveness}/10</span>
+            <span className="text-sm font-medium text-gray-500 block">
+              Productivity
+            </span>
+            <span className="text-lg">
+              {data.metrics.sentiment.productiveness}/10
+            </span>
           </div>
         </div>
 
         <div>
-          <h4 className="text-sm font-medium text-gray-500 mb-3">Time Breakdown</h4>
+          <h4 className="text-sm font-medium text-gray-500 mb-3">
+            Time Breakdown
+          </h4>
           <div className="space-y-3">
             {data.metrics.timeBreakdown.map((item, index) => (
               <TooltipProvider key={index}>
@@ -157,8 +184,12 @@ export const MeetingDetails = ({
                   <TooltipTrigger asChild>
                     <div className="flex items-center gap-4">
                       <div className="w-1/2">
-                        <div className="text-sm text-gray-900">{item.topic}</div>
-                        <div className="text-xs text-gray-500">{item.duration}</div>
+                        <div className="text-sm text-gray-900">
+                          {item.topic}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {item.duration}
+                        </div>
                       </div>
                       <div className="w-1/2">
                         <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
@@ -167,12 +198,16 @@ export const MeetingDetails = ({
                             style={{ width: `${item.percentage}%` }}
                           />
                         </div>
-                        <div className="text-xs text-gray-500 mt-1">{item.percentage}%</div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {item.percentage}%
+                        </div>
                       </div>
                     </div>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>{item.topic}: {item.duration} ({item.percentage}%)</p>
+                    <p>
+                      {item.topic}: {item.duration} ({item.percentage}%)
+                    </p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -201,7 +236,11 @@ export const MeetingDetails = ({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" onClick={copyMarkdown} disabled={isCopying}>
+                <Button
+                  variant="ghost"
+                  onClick={copyMarkdown}
+                  disabled={isCopying}
+                >
                   {isCopying ? (
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   ) : (
@@ -217,7 +256,11 @@ export const MeetingDetails = ({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" onClick={exportMarkdown} disabled={isExporting}>
+                <Button
+                  variant="ghost"
+                  onClick={exportMarkdown}
+                  disabled={isExporting}
+                >
                   {isExporting ? (
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   ) : (
@@ -226,7 +269,9 @@ export const MeetingDetails = ({
                   {isExporting ? "Exporting..." : "Export"}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Download meeting notes as markdown file</TooltipContent>
+              <TooltipContent>
+                Download meeting notes as markdown file
+              </TooltipContent>
             </Tooltip>
           </TooltipProvider>
 
@@ -261,16 +306,22 @@ export const MeetingDetails = ({
               <CardContent>
                 <div className="space-y-6">
                   <div>
-                    <span className="text-sm font-medium text-gray-500 block mb-1">Title</span>
-                    <h3 className="text-xl font-semibold text-gray-900">{data.title}</h3>
+                    <span className="text-sm font-medium text-gray-500 block mb-1">
+                      Title
+                    </span>
+                    <h3 className="text-xl font-semibold text-gray-900">
+                      {data.title}
+                    </h3>
                   </div>
 
                   <div>
-                    <span className="text-sm font-medium text-gray-500 block mb-2">Attendees</span>
+                    <span className="text-sm font-medium text-gray-500 block mb-2">
+                      Attendees
+                    </span>
                     <div className="flex flex-wrap gap-1.5">
                       {data.attendees.map((attendee, index) => (
-                        <span 
-                          key={index} 
+                        <span
+                          key={index}
                           className="inline-flex items-center px-2.5 py-1 rounded-full text-sm bg-gray-100 text-gray-800 hover:bg-gray-200 transition-colors"
                         >
                           {attendee}
@@ -281,20 +332,28 @@ export const MeetingDetails = ({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <span className="text-sm font-medium text-gray-500 block mb-1">Date</span>
+                      <span className="text-sm font-medium text-gray-500 block mb-1">
+                        Date
+                      </span>
                       <p className="text-base text-gray-900">{data.date}</p>
                     </div>
                     {data.length && (
                       <div>
-                        <span className="text-sm font-medium text-gray-500 block mb-1">Length</span>
+                        <span className="text-sm font-medium text-gray-500 block mb-1">
+                          Length
+                        </span>
                         <p className="text-base text-gray-900">{data.length}</p>
                       </div>
                     )}
                   </div>
 
                   <div className="pt-4 border-t border-gray-200">
-                    <span className="text-sm font-medium text-gray-500 block mb-2">Meeting Summary</span>
-                    <p className="text-base text-gray-900 leading-relaxed whitespace-pre-wrap">{data.summary}</p>
+                    <span className="text-sm font-medium text-gray-500 block mb-2">
+                      Meeting Summary
+                    </span>
+                    <p className="text-base text-gray-900 leading-relaxed whitespace-pre-wrap">
+                      {data.summary}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -335,7 +394,9 @@ export const MeetingDetails = ({
                             <AttendeeSelect
                               attendees={data.attendees}
                               value={item.assignee}
-                              onValueChange={(value) => handleAssigneeChange(index, value)}
+                              onValueChange={(value) =>
+                                handleAssigneeChange(index, value)
+                              }
                               className="min-w-[150px]"
                             />
                           </td>
@@ -371,12 +432,22 @@ export const MeetingDetails = ({
                 <CardContent>
                   <div className="space-y-4">
                     {data.keyDecisions.map((decision, index) => (
-                      <div key={index} className="border-l-2 border-blue-500 pl-4 py-2">
-                        <h4 className="font-medium text-gray-900">{decision.decision}</h4>
-                        <p className="text-sm text-gray-600 mt-1">{decision.context}</p>
+                      <div
+                        key={index}
+                        className="border-l-2 border-blue-500 pl-4 py-2"
+                      >
+                        <h4 className="font-medium text-gray-900">
+                          {decision.decision}
+                        </h4>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {decision.context}
+                        </p>
                         <div className="flex gap-2 mt-2">
                           {decision.stakeholders.map((stakeholder, idx) => (
-                            <span key={idx} className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                            <span
+                              key={idx}
+                              className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded"
+                            >
                               {stakeholder}
                             </span>
                           ))}
@@ -404,7 +475,10 @@ export const MeetingDetails = ({
                 <CardContent>
                   <ul className="space-y-2">
                     {data.meetingNotes.map((note, index) => (
-                      <li key={index} className="flex items-start pl-4 relative">
+                      <li
+                        key={index}
+                        className="flex items-start pl-4 relative"
+                      >
                         <span className="absolute left-0 text-gray-400">/</span>
                         <span className="text-gray-900">{note}</span>
                       </li>
@@ -430,29 +504,46 @@ export const MeetingDetails = ({
                 <CardContent>
                   <div className="space-y-4">
                     {data.followupMeetings.map((meeting, index) => (
-                      <div key={index} className={`p-4 rounded-lg ${
-                        meeting.priority === 'high' ? 'bg-red-50' :
-                        meeting.priority === 'medium' ? 'bg-yellow-50' :
-                        'bg-green-50'
-                      }`}>
+                      <div
+                        key={index}
+                        className={`p-4 rounded-lg ${
+                          meeting.priority === "high"
+                            ? "bg-red-50"
+                            : meeting.priority === "medium"
+                            ? "bg-yellow-50"
+                            : "bg-green-50"
+                        }`}
+                      >
                         <div className="flex justify-between items-start">
-                          <h4 className="font-medium text-gray-900">{meeting.topic}</h4>
-                          <span className={`text-xs px-2 py-1 rounded capitalize ${
-                            meeting.priority === 'high' ? 'bg-red-100 text-red-800' :
-                            meeting.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-green-100 text-green-800'
-                          }`}>
+                          <h4 className="font-medium text-gray-900">
+                            {meeting.topic}
+                          </h4>
+                          <span
+                            className={`text-xs px-2 py-1 rounded capitalize ${
+                              meeting.priority === "high"
+                                ? "bg-red-100 text-red-800"
+                                : meeting.priority === "medium"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-green-100 text-green-800"
+                            }`}
+                          >
                             {meeting.priority} priority
                           </span>
                         </div>
                         {meeting.proposedDate && (
                           <p className="text-sm text-gray-600 mt-2">
-                            Proposed: {new Date(meeting.proposedDate).toLocaleDateString()}
+                            Proposed:{" "}
+                            {new Date(
+                              meeting.proposedDate
+                            ).toLocaleDateString()}
                           </p>
                         )}
                         <div className="flex gap-2 mt-2">
                           {meeting.requiredAttendees.map((attendee, idx) => (
-                            <span key={idx} className="text-xs bg-white text-gray-700 px-2 py-1 rounded">
+                            <span
+                              key={idx}
+                              className="text-xs bg-white text-gray-700 px-2 py-1 rounded"
+                            >
                               {attendee}
                             </span>
                           ))}
@@ -499,7 +590,9 @@ export const MeetingDetails = ({
                             <AttendeeSelect
                               attendees={data.attendees}
                               value={item.assignee}
-                              onValueChange={(value) => handlePotentialAssigneeChange(index, value)}
+                              onValueChange={(value) =>
+                                handlePotentialAssigneeChange(index, value)
+                              }
                               className="min-w-[150px]"
                             />
                           </td>
@@ -535,7 +628,10 @@ export const MeetingDetails = ({
                 <CardContent>
                   <ul className="space-y-2">
                     {data.unresolvedQuestions.map((question, index) => (
-                      <li key={index} className="flex items-start pl-4 relative">
+                      <li
+                        key={index}
+                        className="flex items-start pl-4 relative"
+                      >
                         <span className="absolute left-0 text-gray-400">?</span>
                         <span className="text-gray-900">{question}</span>
                       </li>
@@ -574,32 +670,48 @@ export const MeetingDetails = ({
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {data.retro.participants.map((participant, participantIndex) => (
-                        <React.Fragment key={`participant-${participantIndex}`}>
-                          {participant.items.map((item, itemIndex) => (
-                            <tr key={`${participantIndex}-${itemIndex}`} className="hover:bg-gray-50">
-                              <td className={`px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 ${
-                                itemIndex === 0 ? "font-semibold" : ""
-                              }`}>
-                                {itemIndex === 0 ? (
-                                  <AttendeeSelect
-                                    attendees={data.attendees}
-                                    value={participant.name}
-                                    onValueChange={(value) => handleRetroParticipantChange(participantIndex, value)}
-                                    className="min-w-[150px]"
-                                  />
-                                ) : ""}
-                              </td>
-                              <td className="px-4 py-3 text-sm text-gray-900 capitalize">
-                                {item.category}
-                              </td>
-                              <td className="px-4 py-3 text-sm text-gray-900">
-                                {item.description}
-                              </td>
-                            </tr>
-                          ))}
-                        </React.Fragment>
-                      ))}
+                      {data.retro.participants.map(
+                        (participant, participantIndex) => (
+                          <React.Fragment
+                            key={`participant-${participantIndex}`}
+                          >
+                            {participant.items.map((item, itemIndex) => (
+                              <tr
+                                key={`${participantIndex}-${itemIndex}`}
+                                className="hover:bg-gray-50"
+                              >
+                                <td
+                                  className={`px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 ${
+                                    itemIndex === 0 ? "font-semibold" : ""
+                                  }`}
+                                >
+                                  {itemIndex === 0 ? (
+                                    <AttendeeSelect
+                                      attendees={data.attendees}
+                                      value={participant.name}
+                                      onValueChange={(value) =>
+                                        handleRetroParticipantChange(
+                                          participantIndex,
+                                          value
+                                        )
+                                      }
+                                      className="min-w-[150px]"
+                                    />
+                                  ) : (
+                                    ""
+                                  )}
+                                </td>
+                                <td className="px-4 py-3 text-sm text-gray-900 capitalize">
+                                  {item.category}
+                                </td>
+                                <td className="px-4 py-3 text-sm text-gray-900">
+                                  {item.description}
+                                </td>
+                              </tr>
+                            ))}
+                          </React.Fragment>
+                        )
+                      )}
                     </tbody>
                   </table>
                 </CardContent>
@@ -619,9 +731,7 @@ export const MeetingDetails = ({
                 </AccordionTrigger>
               </CardHeader>
               <AccordionContent>
-                <CardContent>
-                  {renderMetrics()}
-                </CardContent>
+                <CardContent>{renderMetrics()}</CardContent>
               </AccordionContent>
             </Card>
           </AccordionItem>
